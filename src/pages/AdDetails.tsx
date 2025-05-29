@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Header } from '@/components/Header';
 import { Star, MessageCircle, MapPin, ArrowLeft, Heart, Share2, Eye } from 'lucide-react';
-import { useAd, useRecordView, useRecordClick } from '@/hooks/useAds';
+import { useAd } from '@/hooks/useAds';
+import { useRecordView, useRecordClick } from '@/hooks/useAdTracking';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useEffect } from 'react';
 
