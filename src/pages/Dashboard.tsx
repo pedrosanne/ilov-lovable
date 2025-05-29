@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle, Eye, MessageCircle, TrendingUp } from 'lucide-react';
 import { MetricsChart } from '@/components/MetricsChart';
 import { useAuth } from '@/hooks/useAuth';
-import { useAdStats } from '@/hooks/useAdStats';
+import { useAdStats } from '@/hooks/useAds';
 import { Navigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 
