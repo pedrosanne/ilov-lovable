@@ -167,15 +167,25 @@ export function useRecordView() {
 
       if (viewError) {
         console.error('Error recording view:', viewError);
+        return;
       }
 
-      // Increment view count
-      const { error: updateError } = await supabase.rpc('increment_views', {
-        ad_id: adId,
-      });
+      // Increment view count using a simple update
+      const { data: currentAd } = await supabase
+        .from('ads')
+        .select('views_count')
+        .eq('id', adId)
+        .single();
 
-      if (updateError) {
-        console.error('Error incrementing views:', updateError);
+      if (currentAd) {
+        const { error: updateError } = await supabase
+          .from('ads')
+          .update({ views_count: (currentAd.views_count || 0) + 1 })
+          .eq('id', adId);
+
+        if (updateError) {
+          console.error('Error incrementing views:', updateError);
+        }
       }
     },
   });
@@ -195,15 +205,25 @@ export function useRecordClick() {
 
       if (clickError) {
         console.error('Error recording click:', clickError);
+        return;
       }
 
-      // Increment click count
-      const { error: updateError } = await supabase.rpc('increment_clicks', {
-        ad_id: adId,
-      });
+      // Increment click count using a simple update
+      const { data: currentAd } = await supabase
+        .from('ads')
+        .select('clicks_count')
+        .eq('id', adId)
+        .single();
 
-      if (updateError) {
-        console.error('Error incrementing clicks:', updateError);
+      if (currentAd) {
+        const { error: updateError } = await supabase
+          .from('ads')
+          .update({ clicks_count: (currentAd.clicks_count || 0) + 1 })
+          .eq('id', adId);
+
+        if (updateError) {
+          console.error('Error incrementing clicks:', updateError);
+        }
       }
     },
   });
