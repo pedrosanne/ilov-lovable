@@ -1,9 +1,28 @@
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, User, PlusCircle } from 'lucide-react';
+import { Heart, User, PlusCircle, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function Header() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 py-4">
@@ -26,18 +45,49 @@ export function Header() {
           </nav>
           
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" asChild>
-              <Link to="/login">
-                <User className="h-4 w-4 mr-2" />
-                Entrar
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link to="/dashboard">
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Anunciar
-              </Link>
-            </Button>
+            {user ? (
+              <>
+                <Button asChild>
+                  <Link to="/dashboard">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Anunciar
+                  </Link>
+                </Button>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost">
+                      <User className="h-4 w-4 mr-2" />
+                      Minha Conta
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sair
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">
+                    <User className="h-4 w-4 mr-2" />
+                    Entrar
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/login">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Anunciar
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>

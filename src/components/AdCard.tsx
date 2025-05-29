@@ -3,27 +3,19 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, MessageCircle, MapPin, Heart } from 'lucide-react';
-
-interface Ad {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  location: string;
-  image: string;
-  whatsapp: string;
-  rating: number;
-  provider: string;
-}
+import { Star, MessageCircle, MapPin, Heart, Eye } from 'lucide-react';
+import { Ad } from '@/types/database';
+import { useRecordClick } from '@/hooks/useAds';
 
 interface AdCardProps {
   ad: Ad;
 }
 
 export function AdCard({ ad }: AdCardProps) {
+  const recordClick = useRecordClick();
+
   const handleWhatsAppClick = () => {
+    recordClick.mutate(ad.id);
     const message = `Olá! Tenho interesse no serviço: ${ad.title}`;
     const whatsappUrl = `https://wa.me/55${ad.whatsapp}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -35,7 +27,10 @@ export function AdCard({ ad }: AdCardProps) {
       saude: 'Saúde',
       casa: 'Casa',
       tecnologia: 'Tecnologia',
-      educacao: 'Educação'
+      educacao: 'Educação',
+      servicos_gerais: 'Serviços Gerais',
+      consultoria: 'Consultoria',
+      eventos: 'Eventos'
     };
     return categories[category as keyof typeof categories] || category;
   };
@@ -44,7 +39,7 @@ export function AdCard({ ad }: AdCardProps) {
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <div className="relative">
         <img 
-          src={ad.image} 
+          src={ad.image_url || '/placeholder.svg'} 
           alt={ad.title}
           className="w-full h-48 object-cover rounded-t-lg"
         />
@@ -62,8 +57,8 @@ export function AdCard({ ad }: AdCardProps) {
             {ad.title}
           </h3>
           <div className="flex items-center space-x-1">
-            <Star className="h-4 w-4 text-yellow-400 fill-current" />
-            <span className="text-sm text-gray-600">{ad.rating}</span>
+            <Eye className="h-4 w-4 text-gray-400" />
+            <span className="text-sm text-gray-600">{ad.views_count}</span>
           </div>
         </div>
         
@@ -79,11 +74,11 @@ export function AdCard({ ad }: AdCardProps) {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-2xl font-bold text-gray-900">
-              R$ {ad.price.toFixed(2)}
+              R$ {Number(ad.price).toFixed(2)}
             </span>
           </div>
           <span className="text-sm text-gray-600">
-            por {ad.provider}
+            por {ad.profiles?.full_name || 'Anunciante'}
           </span>
         </div>
       </CardContent>

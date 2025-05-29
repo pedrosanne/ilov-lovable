@@ -4,15 +4,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Eye, MessageCircle, TrendingUp } from 'lucide-react';
 import { MetricsChart } from '@/components/MetricsChart';
+import { useAuth } from '@/hooks/useAuth';
+import { useAdStats } from '@/hooks/useAds';
+import { Navigate } from 'react-router-dom';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Dashboard = () => {
-  // Mock data - will be replaced with Supabase
-  const stats = {
-    totalAds: 3,
-    totalViews: 1247,
-    totalClicks: 89,
-    totalMessages: 23
-  };
+  const { user, loading } = useAuth();
+  const { data: stats, isLoading: statsLoading } = useAdStats();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <Skeleton className="h-8 w-64 mb-8" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-32" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -38,9 +57,11 @@ const Dashboard = () => {
               <PlusCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalAds}</div>
+              <div className="text-2xl font-bold">
+                {statsLoading ? <Skeleton className="h-8 w-8" /> : stats?.totalAds || 0}
+              </div>
               <p className="text-xs text-muted-foreground">
-                +2 desde o mês passado
+                Total de anúncios
               </p>
             </CardContent>
           </Card>
@@ -53,9 +74,11 @@ const Dashboard = () => {
               <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalViews}</div>
+              <div className="text-2xl font-bold">
+                {statsLoading ? <Skeleton className="h-8 w-12" /> : stats?.totalViews || 0}
+              </div>
               <p className="text-xs text-muted-foreground">
-                +12% desde a semana passada
+                Total de visualizações
               </p>
             </CardContent>
           </Card>
@@ -68,9 +91,11 @@ const Dashboard = () => {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalClicks}</div>
+              <div className="text-2xl font-bold">
+                {statsLoading ? <Skeleton className="h-8 w-12" /> : stats?.totalClicks || 0}
+              </div>
               <p className="text-xs text-muted-foreground">
-                +8% desde a semana passada
+                Total de cliques
               </p>
             </CardContent>
           </Card>
@@ -83,9 +108,11 @@ const Dashboard = () => {
               <MessageCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalMessages}</div>
+              <div className="text-2xl font-bold">
+                {statsLoading ? <Skeleton className="h-8 w-12" /> : stats?.totalMessages || 0}
+              </div>
               <p className="text-xs text-muted-foreground">
-                +5 novas hoje
+                Via WhatsApp
               </p>
             </CardContent>
           </Card>

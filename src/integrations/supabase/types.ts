@@ -9,7 +9,224 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      ad_clicks: {
+        Row: {
+          ad_id: string
+          clicked_at: string | null
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ad_id: string
+          clicked_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ad_id?: string
+          clicked_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_clicks_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_clicks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_views: {
+        Row: {
+          ad_id: string
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+          user_id: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          ad_id: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          ad_id?: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_views_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ads: {
+        Row: {
+          category: Database["public"]["Enums"]["category_type"]
+          clicks_count: number | null
+          created_at: string | null
+          description: string
+          id: string
+          image_url: string | null
+          location: string
+          price: number
+          status: Database["public"]["Enums"]["ad_status"] | null
+          title: string
+          updated_at: string | null
+          user_id: string
+          video_url: string | null
+          views_count: number | null
+          whatsapp: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["category_type"]
+          clicks_count?: number | null
+          created_at?: string | null
+          description: string
+          id?: string
+          image_url?: string | null
+          location: string
+          price: number
+          status?: Database["public"]["Enums"]["ad_status"] | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+          video_url?: string | null
+          views_count?: number | null
+          whatsapp: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["category_type"]
+          clicks_count?: number | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          image_url?: string | null
+          location?: string
+          price?: number
+          status?: Database["public"]["Enums"]["ad_status"] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          video_url?: string | null
+          views_count?: number | null
+          whatsapp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          ad_id: string
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          is_admin: boolean | null
+          is_provider: boolean | null
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          is_admin?: boolean | null
+          is_provider?: boolean | null
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          is_admin?: boolean | null
+          is_provider?: boolean | null
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +235,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      ad_status: "active" | "inactive" | "pending_approval" | "rejected"
+      category_type:
+        | "beleza"
+        | "saude"
+        | "casa"
+        | "tecnologia"
+        | "educacao"
+        | "servicos_gerais"
+        | "consultoria"
+        | "eventos"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +359,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      ad_status: ["active", "inactive", "pending_approval", "rejected"],
+      category_type: [
+        "beleza",
+        "saude",
+        "casa",
+        "tecnologia",
+        "educacao",
+        "servicos_gerais",
+        "consultoria",
+        "eventos",
+      ],
+    },
   },
 } as const
