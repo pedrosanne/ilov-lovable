@@ -1,0 +1,111 @@
+
+import { Link } from 'react-router-dom';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Star, MessageCircle, MapPin, Heart } from 'lucide-react';
+
+interface Ad {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  location: string;
+  image: string;
+  whatsapp: string;
+  rating: number;
+  provider: string;
+}
+
+interface AdCardProps {
+  ad: Ad;
+}
+
+export function AdCard({ ad }: AdCardProps) {
+  const handleWhatsAppClick = () => {
+    const message = `Olá! Tenho interesse no serviço: ${ad.title}`;
+    const whatsappUrl = `https://wa.me/55${ad.whatsapp}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const categories = {
+      beleza: 'Beleza',
+      saude: 'Saúde',
+      casa: 'Casa',
+      tecnologia: 'Tecnologia',
+      educacao: 'Educação'
+    };
+    return categories[category as keyof typeof categories] || category;
+  };
+
+  return (
+    <Card className="hover:shadow-lg transition-shadow duration-300">
+      <div className="relative">
+        <img 
+          src={ad.image} 
+          alt={ad.title}
+          className="w-full h-48 object-cover rounded-t-lg"
+        />
+        <button className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50">
+          <Heart className="h-4 w-4 text-gray-600" />
+        </button>
+        <Badge className="absolute top-2 left-2" variant="secondary">
+          {getCategoryLabel(ad.category)}
+        </Badge>
+      </div>
+      
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+            {ad.title}
+          </h3>
+          <div className="flex items-center space-x-1">
+            <Star className="h-4 w-4 text-yellow-400 fill-current" />
+            <span className="text-sm text-gray-600">{ad.rating}</span>
+          </div>
+        </div>
+        
+        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          {ad.description}
+        </p>
+        
+        <div className="flex items-center text-sm text-gray-500 mb-3">
+          <MapPin className="h-4 w-4 mr-1" />
+          {ad.location}
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-2xl font-bold text-gray-900">
+              R$ {ad.price.toFixed(2)}
+            </span>
+          </div>
+          <span className="text-sm text-gray-600">
+            por {ad.provider}
+          </span>
+        </div>
+      </CardContent>
+      
+      <CardFooter className="p-4 pt-0 space-y-2">
+        <div className="grid grid-cols-2 gap-2 w-full">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleWhatsAppClick}
+            className="flex items-center"
+          >
+            <MessageCircle className="h-4 w-4 mr-1" />
+            WhatsApp
+          </Button>
+          <Button size="sm" asChild>
+            <Link to={`/ad/${ad.id}`}>
+              Ver Detalhes
+            </Link>
+          </Button>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}
