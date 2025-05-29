@@ -5,6 +5,7 @@ import { Ad, Database } from '@/types/database';
 import { useToast } from '@/hooks/use-toast';
 
 type AdInsert = Database['public']['Tables']['ads']['Insert'];
+type CategoryType = Database['public']['Tables']['ads']['Row']['category'];
 
 export function useAds(searchTerm?: string, category?: string, location?: string) {
   return useQuery({
@@ -28,7 +29,7 @@ export function useAds(searchTerm?: string, category?: string, location?: string
       }
 
       if (category) {
-        query = query.eq('category', category);
+        query = query.eq('category', category as CategoryType);
       }
 
       if (location) {
