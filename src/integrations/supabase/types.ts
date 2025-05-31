@@ -332,48 +332,283 @@ export type Database = {
         }
         Relationships: []
       }
+      post_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "profile_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "profile_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_posts: {
+        Row: {
+          comments_count: number | null
+          content: string | null
+          created_at: string
+          id: string
+          likes_count: number | null
+          media_type: string | null
+          media_urls: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comments_count?: number | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          likes_count?: number | null
+          media_type?: string | null
+          media_urls?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comments_count?: number | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          likes_count?: number | null
+          media_type?: string | null
+          media_urls?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_stories: {
+        Row: {
+          caption: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          media_type: string
+          media_url: string
+          user_id: string
+          views_count: number | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          media_type: string
+          media_url: string
+          user_id: string
+          views_count?: number | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          media_type?: string
+          media_url?: string
+          user_id?: string
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_stories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
+          birth_date: string | null
+          cover_image_url: string | null
           created_at: string | null
           email: string
+          followers_count: number | null
+          following_count: number | null
           full_name: string | null
           id: string
+          instagram_handle: string | null
           is_admin: boolean | null
           is_provider: boolean | null
+          location: string | null
           phone: string | null
+          posts_count: number | null
+          profession: string | null
+          twitter_handle: string | null
           updated_at: string | null
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
+          birth_date?: string | null
+          cover_image_url?: string | null
           created_at?: string | null
           email: string
+          followers_count?: number | null
+          following_count?: number | null
           full_name?: string | null
           id: string
+          instagram_handle?: string | null
           is_admin?: boolean | null
           is_provider?: boolean | null
+          location?: string | null
           phone?: string | null
+          posts_count?: number | null
+          profession?: string | null
+          twitter_handle?: string | null
           updated_at?: string | null
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
+          birth_date?: string | null
+          cover_image_url?: string | null
           created_at?: string | null
           email?: string
+          followers_count?: number | null
+          following_count?: number | null
           full_name?: string | null
           id?: string
+          instagram_handle?: string | null
           is_admin?: boolean | null
           is_provider?: boolean | null
+          location?: string | null
           phone?: string | null
+          posts_count?: number | null
+          profession?: string | null
+          twitter_handle?: string | null
           updated_at?: string | null
+          website?: string | null
         }
         Relationships: []
+      }
+      story_views: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          story_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          story_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          story_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_views_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      clean_expired_stories: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       ad_status: "active" | "inactive" | "pending_approval" | "rejected"

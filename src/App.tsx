@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import MyAds from "./pages/MyAds";
 import Messages from "./pages/Messages";
 import Reports from "./pages/Reports";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,7 @@ const App = () => (
             <Route path="/my-ads" element={<MyAds />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/profile/:userId?" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

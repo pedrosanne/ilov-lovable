@@ -1,7 +1,7 @@
 
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, User, PlusCircle, LogOut } from 'lucide-react';
+import { Heart, User, PlusCircle, LogOut, UserCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import {
   DropdownMenu,
@@ -62,6 +62,12 @@ export function Header() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">
+                        <UserCircle className="h-4 w-4 mr-2" />
+                        Meu Perfil
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/dashboard">Dashboard</Link>
                     </DropdownMenuItem>
