@@ -140,8 +140,8 @@ export function useAdStats() {
       }
 
       const totalAds = ads.length;
-      const totalViews = ads.reduce((sum, ad) => sum + ad.views_count, 0);
-      const totalClicks = ads.reduce((sum, ad) => sum + ad.clicks_count, 0);
+      const totalViews = ads.reduce((sum, ad) => sum + (ad.views_count || 0), 0);
+      const totalClicks = ads.reduce((sum, ad) => sum + (ad.clicks_count || 0), 0);
 
       return {
         totalAds,
