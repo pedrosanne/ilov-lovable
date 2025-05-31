@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import AdDetails from "./pages/AdDetails";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import CreateAd from "./pages/CreateAd";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/ad/:id" element={<AdDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/create-ad" element={<CreateAd />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

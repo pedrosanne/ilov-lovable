@@ -95,54 +95,168 @@ export type Database = {
       }
       ads: {
         Row: {
+          accepts_last_minute: boolean | null
+          accepts_travel: boolean | null
+          age: number | null
+          age_confirmed: boolean | null
+          appointment_only: boolean | null
+          availability_days: string[] | null
+          availability_hours: Json | null
+          body_type: string | null
           category: Database["public"]["Enums"]["category_type"]
           clicks_count: number | null
+          contact_email: string | null
+          contact_instagram: string | null
+          contact_other: string | null
+          contact_telegram: string | null
           created_at: string | null
           description: string
+          ethnicity: string | null
+          favorite_drink: string | null
+          favorite_fragrance: string | null
+          favorite_music: string | null
+          gender: string | null
+          height: number | null
+          highlight_package: string | null
+          highlight_phrase: string | null
+          hourly_rate: number | null
           id: string
+          image_consent: boolean | null
           image_url: string | null
+          languages: string[] | null
           location: string
+          neighborhood: string | null
+          packages: Json | null
+          payment_methods: string[] | null
+          personal_rules: string | null
+          photos: Json | null
+          postal_code: string | null
+          preferred_gifts: string | null
+          presentation_name: string | null
           price: number
+          restrictions: string | null
+          service_locations: string[] | null
+          services_offered: string[] | null
           status: Database["public"]["Enums"]["ad_status"] | null
+          target_audience: string[] | null
+          terms_accepted: boolean | null
           title: string
           updated_at: string | null
           user_id: string
           video_url: string | null
+          videos: Json | null
           views_count: number | null
+          weight: number | null
           whatsapp: string
         }
         Insert: {
+          accepts_last_minute?: boolean | null
+          accepts_travel?: boolean | null
+          age?: number | null
+          age_confirmed?: boolean | null
+          appointment_only?: boolean | null
+          availability_days?: string[] | null
+          availability_hours?: Json | null
+          body_type?: string | null
           category: Database["public"]["Enums"]["category_type"]
           clicks_count?: number | null
+          contact_email?: string | null
+          contact_instagram?: string | null
+          contact_other?: string | null
+          contact_telegram?: string | null
           created_at?: string | null
           description: string
+          ethnicity?: string | null
+          favorite_drink?: string | null
+          favorite_fragrance?: string | null
+          favorite_music?: string | null
+          gender?: string | null
+          height?: number | null
+          highlight_package?: string | null
+          highlight_phrase?: string | null
+          hourly_rate?: number | null
           id?: string
+          image_consent?: boolean | null
           image_url?: string | null
+          languages?: string[] | null
           location: string
+          neighborhood?: string | null
+          packages?: Json | null
+          payment_methods?: string[] | null
+          personal_rules?: string | null
+          photos?: Json | null
+          postal_code?: string | null
+          preferred_gifts?: string | null
+          presentation_name?: string | null
           price: number
+          restrictions?: string | null
+          service_locations?: string[] | null
+          services_offered?: string[] | null
           status?: Database["public"]["Enums"]["ad_status"] | null
+          target_audience?: string[] | null
+          terms_accepted?: boolean | null
           title: string
           updated_at?: string | null
           user_id: string
           video_url?: string | null
+          videos?: Json | null
           views_count?: number | null
+          weight?: number | null
           whatsapp: string
         }
         Update: {
+          accepts_last_minute?: boolean | null
+          accepts_travel?: boolean | null
+          age?: number | null
+          age_confirmed?: boolean | null
+          appointment_only?: boolean | null
+          availability_days?: string[] | null
+          availability_hours?: Json | null
+          body_type?: string | null
           category?: Database["public"]["Enums"]["category_type"]
           clicks_count?: number | null
+          contact_email?: string | null
+          contact_instagram?: string | null
+          contact_other?: string | null
+          contact_telegram?: string | null
           created_at?: string | null
           description?: string
+          ethnicity?: string | null
+          favorite_drink?: string | null
+          favorite_fragrance?: string | null
+          favorite_music?: string | null
+          gender?: string | null
+          height?: number | null
+          highlight_package?: string | null
+          highlight_phrase?: string | null
+          hourly_rate?: number | null
           id?: string
+          image_consent?: boolean | null
           image_url?: string | null
+          languages?: string[] | null
           location?: string
+          neighborhood?: string | null
+          packages?: Json | null
+          payment_methods?: string[] | null
+          personal_rules?: string | null
+          photos?: Json | null
+          postal_code?: string | null
+          preferred_gifts?: string | null
+          presentation_name?: string | null
           price?: number
+          restrictions?: string | null
+          service_locations?: string[] | null
+          services_offered?: string[] | null
           status?: Database["public"]["Enums"]["ad_status"] | null
+          target_audience?: string[] | null
+          terms_accepted?: boolean | null
           title?: string
           updated_at?: string | null
           user_id?: string
           video_url?: string | null
+          videos?: Json | null
           views_count?: number | null
+          weight?: number | null
           whatsapp?: string
         }
         Relationships: [
@@ -190,6 +304,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      highlight_packages: {
+        Row: {
+          created_at: string | null
+          duration_days: number
+          features: Json
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          created_at?: string | null
+          duration_days: number
+          features: Json
+          id?: string
+          name: string
+          price: number
+        }
+        Update: {
+          created_at?: string | null
+          duration_days?: number
+          features?: Json
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -245,6 +386,7 @@ export type Database = {
         | "servicos_gerais"
         | "consultoria"
         | "eventos"
+        | "acompanhante"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -370,6 +512,7 @@ export const Constants = {
         "servicos_gerais",
         "consultoria",
         "eventos",
+        "acompanhante",
       ],
     },
   },

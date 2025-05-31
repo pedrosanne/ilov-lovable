@@ -6,7 +6,7 @@ import { PlusCircle, Eye, MessageCircle, TrendingUp } from 'lucide-react';
 import { MetricsChart } from '@/components/MetricsChart';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdStats } from '@/hooks/useAds';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const Dashboard = () => {
@@ -141,9 +141,11 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button className="w-full justify-start">
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Criar Novo Anúncio
+              <Button className="w-full justify-start" asChild>
+                <Link to="/create-ad">
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Criar Novo Anúncio
+                </Link>
               </Button>
               
               <Button variant="outline" className="w-full justify-start">
