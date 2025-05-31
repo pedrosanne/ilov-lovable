@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +10,9 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import CreateAd from "./pages/CreateAd";
 import NotFound from "./pages/NotFound";
+import MyAds from "./pages/MyAds";
+import Messages from "./pages/Messages";
+import Reports from "./pages/Reports";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +29,9 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create-ad" element={<CreateAd />} />
+            <Route path="/my-ads" element={<MyAds />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/reports" element={<Reports />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

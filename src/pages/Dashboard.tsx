@@ -33,6 +33,8 @@ const Dashboard = () => {
     return <Navigate to="/login" replace />;
   }
 
+  const hasData = stats && (stats.totalAds > 0 || stats.totalViews > 0 || stats.totalClicks > 0);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -122,13 +124,27 @@ const Dashboard = () => {
           {/* Analytics Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Visualizações dos Últimos 7 Dias</CardTitle>
+              <CardTitle>Visualizações por Período</CardTitle>
               <CardDescription>
                 Acompanhe o desempenho dos seus anúncios
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <MetricsChart />
+              {hasData ? (
+                <MetricsChart />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                  <div className="text-center">
+                    <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg font-medium">
+                      Ainda não há métricas para mostrar
+                    </p>
+                    <p className="text-gray-400 text-sm mt-2">
+                      Publique seu primeiro anúncio para ver as estatísticas
+                    </p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -148,19 +164,25 @@ const Dashboard = () => {
                 </Link>
               </Button>
               
-              <Button variant="outline" className="w-full justify-start">
-                <Eye className="h-4 w-4 mr-2" />
-                Ver Meus Anúncios
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <Link to="/my-ads">
+                  <Eye className="h-4 w-4 mr-2" />
+                  Ver Meus Anúncios
+                </Link>
               </Button>
               
-              <Button variant="outline" className="w-full justify-start">
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Mensagens Recebidas
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <Link to="/messages">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Mensagens Recebidas
+                </Link>
               </Button>
               
-              <Button variant="outline" className="w-full justify-start">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Relatório Completo
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <Link to="/reports">
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  Relatório Completo
+                </Link>
               </Button>
             </CardContent>
           </Card>

@@ -113,9 +113,16 @@ export function useMyAds() {
   return useQuery({
     queryKey: ['my-ads'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       const { data, error } = await supabase
         .from('ads')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -131,9 +138,16 @@ export function useAdStats() {
   return useQuery({
     queryKey: ['ad-stats'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       const { data: ads, error: adsError } = await supabase
         .from('ads')
-        .select('id, views_count, clicks_count');
+        .select('id, views_count, clicks_count')
+        .eq('user_id', user.id);
 
       if (adsError) {
         throw adsError;
@@ -147,7 +161,7 @@ export function useAdStats() {
         totalAds,
         totalViews,
         totalClicks,
-        totalMessages: 0, // Will be implemented later
+        totalMessages: 0, // Será implementado quando tivermos a tabela de mensagens
       };
     },
   });
