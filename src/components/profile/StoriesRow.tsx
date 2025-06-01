@@ -3,12 +3,26 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useState } from 'react';
 import { StoryViewer } from './StoryViewer';
 
+interface Story {
+  id: string;
+  user_id: string;
+  media_url: string;
+  media_type: string;
+  caption?: string;
+  created_at: string;
+  user?: {
+    id: string;
+    full_name?: string;
+    avatar_url?: string;
+  };
+}
+
 interface StoriesRowProps {
-  stories: any[];
+  stories: Story[];
 }
 
 export function StoriesRow({ stories }: StoriesRowProps) {
-  const [selectedStory, setSelectedStory] = useState<any>(null);
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   // Agrupar stories por usuário
   const groupedStories = stories.reduce((acc, story) => {
@@ -17,7 +31,7 @@ export function StoriesRow({ stories }: StoriesRowProps) {
     }
     acc[story.user_id].push(story);
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<string, Story[]>);
 
   return (
     <>
