@@ -28,7 +28,8 @@ export function CommentsSection({ postId, onUpdate }: CommentsSectionProps) {
           profiles!inner (
             id,
             full_name,
-            avatar_url
+            avatar_url,
+            presentation_name
           )
         `)
         .eq('post_id', postId)
@@ -74,13 +75,14 @@ export function CommentsSection({ postId, onUpdate }: CommentsSectionProps) {
             <Avatar className="h-8 w-8">
               <AvatarImage src={comment.profiles.avatar_url} />
               <AvatarFallback className="text-xs">
-                {comment.profiles.full_name?.charAt(0) || 'U'}
+                {comment.profiles.presentation_name?.charAt(0) || 
+                 comment.profiles.full_name?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <p className="text-sm">
                 <span className="font-semibold mr-2">
-                  {comment.profiles.full_name}
+                  {comment.profiles.presentation_name || comment.profiles.full_name}
                 </span>
                 {comment.content}
               </p>

@@ -510,6 +510,7 @@ export type Database = {
           location: string | null
           phone: string | null
           posts_count: number | null
+          presentation_name: string | null
           profession: string | null
           twitter_handle: string | null
           updated_at: string | null
@@ -532,6 +533,7 @@ export type Database = {
           location?: string | null
           phone?: string | null
           posts_count?: number | null
+          presentation_name?: string | null
           profession?: string | null
           twitter_handle?: string | null
           updated_at?: string | null
@@ -554,6 +556,7 @@ export type Database = {
           location?: string | null
           phone?: string | null
           posts_count?: number | null
+          presentation_name?: string | null
           profession?: string | null
           twitter_handle?: string | null
           updated_at?: string | null

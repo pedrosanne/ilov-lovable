@@ -7,8 +7,12 @@ import { Header } from '@/components/Header';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { StoriesRow } from '@/components/profile/StoriesRow';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
+import { ClientProfileTabs } from '@/components/profile/ClientProfileTabs';
 import { PostsFeed } from '@/components/profile/PostsFeed';
 import { ProfileInfo } from '@/components/profile/ProfileInfo';
+import { FavoritesSection } from '@/components/profile/FavoritesSection';
+import { UpgradeToProvider } from '@/components/profile/UpgradeToProvider';
+import { ProfileSettings } from '@/components/profile/ProfileSettings';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -36,7 +40,14 @@ const Profile = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profile_stories')
-        .select('*')
+        .select(`
+          *,
+          user: profiles!inner (
+            id,
+            full_name,
+            avatar_url
+          )
+        `)
         .eq('user_id', userId || user?.id)
         .gt('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false });
@@ -73,6 +84,35 @@ const Profile = () => {
   }
 
   const isOwnProfile = user?.id === profile.id;
+  const isProvider = profile.is_provider;
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'posts':
+        return <PostsFeed userId={profile.id} isOwnProfile={isOwnProfile} />;
+      case 'info':
+        return <ProfileInfo profile={profile} isOwnProfile={isOwnProfile} />;
+      case 'favorites':
+        return isOwnProfile ? <FavoritesSection /> : null;
+      case 'messages':
+        return isOwnProfile ? (
+          <div className="bg-white rounded-lg p-12 text-center shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Sistema de Mensagens
+            </h3>
+            <p className="text-gray-600">
+              Em breve você poderá ver todas suas conversas aqui.
+            </p>
+          </div>
+        ) : null;
+      case 'upgrade':
+        return isOwnProfile && !isProvider ? <UpgradeToProvider /> : null;
+      case 'settings':
+        return isOwnProfile ? <ProfileSettings /> : null;
+      default:
+        return <PostsFeed userId={profile.id} isOwnProfile={isOwnProfile} />;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -88,19 +128,24 @@ const Profile = () => {
           <StoriesRow stories={stories} />
         )}
         
-        <ProfileTabs 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab}
-          isOwnProfile={isOwnProfile}
-        />
+        {/* Renderizar abas diferentes baseado no tipo de perfil */}
+        {isProvider ? (
+          <ProfileTabs 
+            activeTab={activeTab} 
+            setActiveTab={setActiveTab}
+            isOwnProfile={isOwnProfile}
+            isProvider={isProvider}
+          />
+        ) : (
+          <ClientProfileTabs 
+            activeTab={activeTab} 
+            setActiveTab={setActiveTab}
+            isOwnProfile={isOwnProfile}
+          />
+        )}
         
         <div className="mt-6">
-          {activeTab === 'posts' && (
-            <PostsFeed userId={profile.id} isOwnProfile={isOwnProfile} />
-          )}
-          {activeTab === 'info' && (
-            <ProfileInfo profile={profile} isOwnProfile={isOwnProfile} />
-          )}
+          {renderTabContent()}
         </div>
       </div>
     </div>

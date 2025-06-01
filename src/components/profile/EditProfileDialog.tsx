@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera } from 'lucide-react';
+import { Camera, Upload } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -29,12 +29,14 @@ export function EditProfileDialog({ open, onOpenChange, profile }: EditProfileDi
     twitter_handle: profile.twitter_handle || '',
     phone: profile.phone || '',
   });
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '');
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
+    mutationFn: async (data: typeof formData & { avatar_url?: string }) => {
       const { error } = await supabase
         .from('profiles')
         .update(data)
@@ -59,9 +61,44 @@ export function EditProfileDialog({ open, onOpenChange, profile }: EditProfileDi
     },
   });
 
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setUploading(true);
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${profile.id}/avatar.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      setAvatarUrl(data.publicUrl);
+      toast({
+        title: "Avatar atualizado!",
+        description: "Sua foto de perfil foi atualizada com sucesso.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro no upload",
+        description: "Não foi possível fazer upload da imagem. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfileMutation.mutate(formData);
+    updateProfileMutation.mutate({ ...formData, avatar_url: avatarUrl });
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -79,15 +116,28 @@ export function EditProfileDialog({ open, onOpenChange, profile }: EditProfileDi
           {/* Avatar */}
           <div className="flex flex-col items-center space-y-2">
             <Avatar className="h-20 w-20">
-              <AvatarImage src={profile.avatar_url} />
+              <AvatarImage src={avatarUrl} />
               <AvatarFallback>
                 {formData.full_name?.charAt(0) || profile.email?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
-            <Button variant="outline" size="sm">
-              <Camera className="h-4 w-4 mr-2" />
-              Alterar Foto
-            </Button>
+            <div className="relative">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={uploading}
+              />
+              <Button variant="outline" size="sm" disabled={uploading}>
+                {uploading ? (
+                  <Upload className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Camera className="h-4 w-4 mr-2" />
+                )}
+                {uploading ? 'Enviando...' : 'Alterar Foto'}
+              </Button>
+            </div>
           </div>
 
           {/* Form Fields */}
@@ -192,7 +242,7 @@ export function EditProfileDialog({ open, onOpenChange, profile }: EditProfileDi
             </Button>
             <Button 
               type="submit"
-              disabled={updateProfileMutation.isPending}
+              disabled={updateProfileMutation.isPending || uploading}
             >
               {updateProfileMutation.isPending ? 'Salvando...' : 'Salvar'}
             </Button>
