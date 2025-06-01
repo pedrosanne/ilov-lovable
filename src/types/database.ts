@@ -1,4 +1,3 @@
-
 export interface Database {
   public: {
     Tables: {
@@ -9,10 +8,22 @@ export interface Database {
           full_name: string | null
           phone: string | null
           avatar_url: string | null
+          cover_image_url: string | null
           is_provider: boolean
           is_admin: boolean
           created_at: string
           updated_at: string
+          presentation_name: string | null
+          bio: string | null
+          location: string | null
+          profession: string | null
+          birth_date: string | null
+          website: string | null
+          instagram_handle: string | null
+          twitter_handle: string | null
+          followers_count: number | null
+          following_count: number | null
+          posts_count: number | null
         }
         Insert: {
           id: string
@@ -20,16 +31,85 @@ export interface Database {
           full_name?: string | null
           phone?: string | null
           avatar_url?: string | null
+          cover_image_url?: string | null
           is_provider?: boolean
           is_admin?: boolean
+          presentation_name?: string | null
+          bio?: string | null
+          location?: string | null
+          profession?: string | null
+          birth_date?: string | null
+          website?: string | null
+          instagram_handle?: string | null
+          twitter_handle?: string | null
+          followers_count?: number | null
+          following_count?: number | null
+          posts_count?: number | null
         }
         Update: {
           email?: string
           full_name?: string | null
           phone?: string | null
           avatar_url?: string | null
+          cover_image_url?: string | null
           is_provider?: boolean
           is_admin?: boolean
+          presentation_name?: string | null
+          bio?: string | null
+          location?: string | null
+          profession?: string | null
+          birth_date?: string | null
+          website?: string | null
+          instagram_handle?: string | null
+          twitter_handle?: string | null
+          followers_count?: number | null
+          following_count?: number | null
+          posts_count?: number | null
+        }
+      }
+      conversations: {
+        Row: {
+          id: string
+          participant_1: string
+          participant_2: string
+          last_message_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          participant_1: string
+          participant_2: string
+          last_message_at?: string | null
+        }
+        Update: {
+          last_message_at?: string | null
+        }
+      }
+      messages: {
+        Row: {
+          id: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          message_type: string | null
+          media_url: string | null
+          is_read: boolean | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          conversation_id: string
+          sender_id: string
+          content: string
+          message_type?: string | null
+          media_url?: string | null
+          is_read?: boolean | null
+        }
+        Update: {
+          content?: string
+          message_type?: string | null
+          media_url?: string | null
+          is_read?: boolean | null
         }
       }
       ads: {
@@ -219,3 +299,7 @@ export type Ad = Database['public']['Tables']['ads']['Row'] & {
 }
 
 export type HighlightPackage = Database['public']['Tables']['highlight_packages']['Row']
+
+export type Conversation = Database['public']['Tables']['conversations']['Row']
+
+export type Message = Database['public']['Tables']['messages']['Row']

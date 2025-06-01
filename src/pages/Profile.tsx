@@ -8,18 +8,23 @@ import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { StoriesRow } from '@/components/profile/StoriesRow';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
 import { ClientProfileTabs } from '@/components/profile/ClientProfileTabs';
+import { ProfileTypeToggle } from '@/components/profile/ProfileTypeToggle';
 import { PostsFeed } from '@/components/profile/PostsFeed';
 import { ProfileInfo } from '@/components/profile/ProfileInfo';
 import { FavoritesSection } from '@/components/profile/FavoritesSection';
 import { UpgradeToProvider } from '@/components/profile/UpgradeToProvider';
 import { ProfileSettings } from '@/components/profile/ProfileSettings';
+import { MessagesSystem } from '@/components/messages/MessagesSystem';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 
 const Profile = () => {
   const { userId } = useParams();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('posts');
+  const [profileViewType, setProfileViewType] = useState<'client' | 'provider'>('client');
+  const [showMessages, setShowMessages] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', userId],
@@ -84,7 +89,13 @@ const Profile = () => {
   }
 
   const isOwnProfile = user?.id === profile.id;
-  const isProvider = profile.is_provider;
+  
+  // Determinar qual tipo de perfil mostrar
+  const showProviderProfile = profileViewType === 'provider' && profile.is_provider;
+
+  const handleStartConversation = () => {
+    setShowMessages(true);
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -96,17 +107,10 @@ const Profile = () => {
         return isOwnProfile ? <FavoritesSection /> : null;
       case 'messages':
         return isOwnProfile ? (
-          <div className="bg-white rounded-lg p-12 text-center shadow-sm">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Sistema de Mensagens
-            </h3>
-            <p className="text-gray-600">
-              Em breve você poderá ver todas suas conversas aqui.
-            </p>
-          </div>
+          <MessagesSystem />
         ) : null;
       case 'upgrade':
-        return isOwnProfile && !isProvider ? <UpgradeToProvider /> : null;
+        return isOwnProfile && !profile.is_provider ? <UpgradeToProvider /> : null;
       case 'settings':
         return isOwnProfile ? <ProfileSettings /> : null;
       default:
@@ -122,19 +126,29 @@ const Profile = () => {
         <ProfileHeader 
           profile={profile} 
           isOwnProfile={isOwnProfile}
+          onStartConversation={!isOwnProfile ? handleStartConversation : undefined}
         />
         
         {stories && stories.length > 0 && (
           <StoriesRow stories={stories} />
         )}
+
+        {/* Toggle de tipo de perfil (apenas para perfil próprio) */}
+        {isOwnProfile && (
+          <ProfileTypeToggle
+            profile={profile}
+            currentViewType={profileViewType}
+            onViewTypeChange={setProfileViewType}
+          />
+        )}
         
         {/* Renderizar abas diferentes baseado no tipo de perfil */}
-        {isProvider ? (
+        {showProviderProfile ? (
           <ProfileTabs 
             activeTab={activeTab} 
             setActiveTab={setActiveTab}
             isOwnProfile={isOwnProfile}
-            isProvider={isProvider}
+            isProvider={true}
           />
         ) : (
           <ClientProfileTabs 
@@ -148,6 +162,16 @@ const Profile = () => {
           {renderTabContent()}
         </div>
       </div>
+
+      {/* Dialog para mensagens */}
+      <Dialog open={showMessages} onOpenChange={setShowMessages}>
+        <DialogContent className="max-w-4xl h-[80vh] p-0">
+          <MessagesSystem 
+            startConversationWith={!isOwnProfile ? profile.id : undefined}
+            onClose={() => setShowMessages(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
