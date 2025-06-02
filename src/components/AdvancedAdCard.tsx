@@ -1,0 +1,129 @@
+
+import { Link } from 'react-router-dom';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Star, MessageCircle, MapPin, Heart, Eye, Navigation } from 'lucide-react';
+import { useRecordClick } from '@/hooks/useAds';
+
+interface AdvancedAdCardProps {
+  ad: {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    category: string;
+    location: string;
+    city?: string;
+    state?: string;
+    image_url?: string;
+    whatsapp: string;
+    user_id: string;
+    views_count: number;
+    distance_km?: number;
+  };
+}
+
+export function AdvancedAdCard({ ad }: AdvancedAdCardProps) {
+  const recordClick = useRecordClick();
+
+  const handleWhatsAppClick = () => {
+    recordClick.mutate(ad.id);
+    const message = `Olá! Tenho interesse no serviço: ${ad.title}`;
+    const whatsappUrl = `https://wa.me/55${ad.whatsapp}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const categories = {
+      beleza: 'Beleza',
+      saude: 'Saúde',
+      casa: 'Casa',
+      tecnologia: 'Tecnologia',
+      educacao: 'Educação',
+      servicos_gerais: 'Serviços Gerais',
+      consultoria: 'Consultoria',
+      eventos: 'Eventos',
+      acompanhante: 'Acompanhante'
+    };
+    return categories[category as keyof typeof categories] || category;
+  };
+
+  return (
+    <Card className="hover:shadow-lg transition-shadow duration-300">
+      <div className="relative">
+        <img 
+          src={ad.image_url || '/placeholder.svg'} 
+          alt={ad.title}
+          className="w-full h-48 object-cover rounded-t-lg"
+        />
+        <button className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50">
+          <Heart className="h-4 w-4 text-gray-600" />
+        </button>
+        <Badge className="absolute top-2 left-2" variant="secondary">
+          {getCategoryLabel(ad.category)}
+        </Badge>
+        
+        {ad.distance_km && (
+          <Badge className="absolute bottom-2 right-2 bg-blue-600" variant="default">
+            <Navigation className="h-3 w-3 mr-1" />
+            {ad.distance_km}km
+          </Badge>
+        )}
+      </div>
+      
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+            {ad.title}
+          </h3>
+          <div className="flex items-center space-x-1">
+            <Eye className="h-4 w-4 text-gray-400" />
+            <span className="text-sm text-gray-600">{ad.views_count}</span>
+          </div>
+        </div>
+        
+        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          {ad.description}
+        </p>
+        
+        <div className="flex items-center text-sm text-gray-500 mb-3">
+          <MapPin className="h-4 w-4 mr-1" />
+          {ad.city && ad.state ? `${ad.city}, ${ad.state}` : ad.location}
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-2xl font-bold text-gray-900">
+              R$ {Number(ad.price).toFixed(2)}
+            </span>
+          </div>
+          {ad.distance_km && (
+            <span className="text-sm text-blue-600 font-medium">
+              {ad.distance_km}km de distância
+            </span>
+          )}
+        </div>
+      </CardContent>
+      
+      <CardFooter className="p-4 pt-0 space-y-2">
+        <div className="grid grid-cols-2 gap-2 w-full">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleWhatsAppClick}
+            className="flex items-center"
+          >
+            <MessageCircle className="h-4 w-4 mr-1" />
+            WhatsApp
+          </Button>
+          <Button size="sm" asChild>
+            <Link to={`/ad/${ad.id}`}>
+              Ver Detalhes
+            </Link>
+          </Button>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}

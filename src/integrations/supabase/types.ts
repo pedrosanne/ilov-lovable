@@ -709,6 +709,36 @@ export type Database = {
         Args: { user1_id: string; user2_id: string }
         Returns: string
       }
+      search_ads_by_location: {
+        Args: {
+          search_lat?: number
+          search_lng?: number
+          search_radius_km?: number
+          search_term?: string
+          search_category?: string
+          search_city?: string
+          search_state?: string
+          limit_count?: number
+        }
+        Returns: {
+          id: string
+          title: string
+          description: string
+          price: number
+          category: Database["public"]["Enums"]["category_type"]
+          location: string
+          city: string
+          state: string
+          latitude: number
+          longitude: number
+          image_url: string
+          whatsapp: string
+          user_id: string
+          views_count: number
+          distance_km: number
+          created_at: string
+        }[]
+      }
     }
     Enums: {
       ad_status: "active" | "inactive" | "pending_approval" | "rejected"
