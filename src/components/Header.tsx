@@ -87,9 +87,9 @@ export function Header() {
                   </Link>
                 </Button>
                 <Button asChild>
-                  <Link to="/login">
+                  <Link to="/signup">
                     <PlusCircle className="h-4 w-4 mr-2" />
-                    Anunciar
+                    Cadastrar
                   </Link>
                 </Button>
               </>
