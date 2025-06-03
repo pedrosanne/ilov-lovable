@@ -173,7 +173,8 @@ const Admin = () => {
                           <Badge variant="secondary">Pendente</Badge>
                         </div>
 
-                        {ad.identity_verification_video_url && (
+                        {/* Temporariamente removido até o campo existir na DB */}
+                        {/* {ad.identity_verification_video_url && (
                           <div className="mb-4">
                             <h4 className="font-medium mb-2 flex items-center gap-2">
                               <Shield className="h-4 w-4" />
@@ -183,7 +184,7 @@ const Admin = () => {
                               <source src={ad.identity_verification_video_url} type="video/mp4" />
                             </video>
                           </div>
-                        )}
+                        )} */}
 
                         <div className="flex gap-2">
                           <Dialog>

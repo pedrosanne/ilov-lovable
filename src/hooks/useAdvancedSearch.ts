@@ -55,7 +55,7 @@ export function useAdvancedSearch(filters: SearchFilters) {
 
         if (error) throw error;
         return data as SearchResult[];
-      } catch (error) {
+      } catch (err) {
         console.log('RPC function not available, using simple query');
         
         // Fallback para query simples
@@ -71,32 +71,38 @@ export function useAdvancedSearch(filters: SearchFilters) {
         }
 
         if (filters.category) {
-          query = query.eq('category', filters.category);
+          // Garantir que a categoria seja válida
+          const validCategories = ['beleza', 'saude', 'casa', 'tecnologia', 'educacao', 'servicos_gerais', 'consultoria', 'eventos', 'acompanhante'];
+          if (validCategories.includes(filters.category)) {
+            query = query.eq('category', filters.category);
+          }
         }
 
         if (filters.city) {
-          query = query.ilike('city', `%${filters.city}%`);
+          query = query.ilike('location', `%${filters.city}%`);
         }
 
         if (filters.state) {
-          query = query.ilike('state', `%${filters.state}%`);
+          query = query.ilike('location', `%${filters.state}%`);
         }
 
-        const { data, error } = await query;
+        const { data, error: queryError } = await query;
 
-        if (error) {
-          console.error('Search error:', error);
-          throw error;
+        if (queryError) {
+          console.error('Search error:', queryError);
+          throw queryError;
         }
 
         console.log('Search results:', data);
         return data?.map(ad => ({
           ...ad,
           distance_km: 0, // Sem cálculo de distância no fallback
-          city: ad.city || '',
-          state: ad.state || '',
-          latitude: ad.latitude || 0,
-          longitude: ad.longitude || 0,
+          city: ad.location || '', // Usar location como city temporariamente
+          state: ad.location || '', // Usar location como state temporariamente
+          latitude: 0, // Valor padrão até ter os campos reais
+          longitude: 0, // Valor padrão até ter os campos reais
+          identity_verification_video_url: '', // Valor padrão até ter o campo real
+          identity_verification_status: 'pending', // Valor padrão até ter o campo real
         })) as SearchResult[] || [];
       }
     },
