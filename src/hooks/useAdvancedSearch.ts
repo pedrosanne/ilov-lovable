@@ -71,10 +71,10 @@ export function useAdvancedSearch(filters: SearchFilters) {
         }
 
         if (filters.category) {
-          // Garantir que a categoria seja válida
-          const validCategories = ['beleza', 'saude', 'casa', 'tecnologia', 'educacao', 'servicos_gerais', 'consultoria', 'eventos', 'acompanhante'];
-          if (validCategories.includes(filters.category)) {
-            query = query.eq('category', filters.category);
+          // Garantir que a categoria seja válida e fazer cast para o tipo correto
+          const validCategories = ['beleza', 'saude', 'casa', 'tecnologia', 'educacao', 'servicos_gerais', 'consultoria', 'eventos', 'acompanhante'] as const;
+          if (validCategories.includes(filters.category as any)) {
+            query = query.eq('category', filters.category as typeof validCategories[number]);
           }
         }
 
