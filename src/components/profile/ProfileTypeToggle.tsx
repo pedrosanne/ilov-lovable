@@ -1,13 +1,10 @@
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { UserCheck, Briefcase, Info } from 'lucide-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { UserCheck, Briefcase, Info, Clock } from 'lucide-react';
+import { useProviderUpgradeRequest } from '@/hooks/useProviderUpgrade';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileTypeToggleProps {
   profile: any;
@@ -16,36 +13,20 @@ interface ProfileTypeToggleProps {
 }
 
 export function ProfileTypeToggle({ profile, currentViewType, onViewTypeChange }: ProfileTypeToggleProps) {
-  const [showUpgradeInfo, setShowUpgradeInfo] = useState(false);
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const { hasRequestPending } = useProviderUpgradeRequest();
+  const navigate = useNavigate();
 
-  const toggleProviderMutation = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ is_provider: !profile.is_provider })
-        .eq('id', profile.id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile', profile.id] });
-      toast({
-        title: profile.is_provider ? "Perfil de anunciante desativado" : "Perfil de anunciante ativado",
-        description: profile.is_provider 
-          ? "Você agora está apenas como contratante." 
-          : "Agora você pode criar anúncios e ser encontrado por clientes!",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Erro",
-        description: "Não foi possível alterar o tipo de perfil.",
-        variant: "destructive",
-      });
-    },
-  });
+  const handleRequestUpgrade = () => {
+    // Navegar para a aba de upgrade
+    onViewTypeChange('client');
+    // Simular um clique na aba upgrade ou navegar para ela
+    setTimeout(() => {
+      const upgradeTab = document.querySelector('[data-tab="upgrade"]') as HTMLElement;
+      if (upgradeTab) {
+        upgradeTab.click();
+      }
+    }, 100);
+  };
 
   return (
     <div className="mb-6 space-y-4">
@@ -83,32 +64,42 @@ export function ProfileTypeToggle({ profile, currentViewType, onViewTypeChange }
             </Button>
           </div>
 
-          {/* Controle para ativar/desativar perfil de anunciante */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div className="flex-1">
-              <h4 className="font-medium">Perfil de Anunciante</h4>
-              <p className="text-sm text-gray-600">
-                Ative para criar anúncios e ser encontrado por clientes
-              </p>
-            </div>
-            <Switch
-              checked={profile.is_provider}
-              onCheckedChange={() => toggleProviderMutation.mutate()}
-              disabled={toggleProviderMutation.isPending}
-            />
-          </div>
-
+          {/* Status do perfil de anunciante */}
           {!profile.is_provider && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-start gap-3">
-                <Info className="h-5 w-5 text-blue-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium text-blue-900">Torne-se um Anunciante</h4>
-                  <p className="text-sm text-blue-700 mt-1">
-                    Ative o perfil de anunciante para criar anúncios, gerenciar seus serviços e ser encontrado por clientes na plataforma.
-                  </p>
+            <div className="space-y-3">
+              {hasRequestPending ? (
+                <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium text-orange-900">Solicitação Pendente</h4>
+                      <p className="text-sm text-orange-700 mt-1">
+                        Sua solicitação para se tornar anunciante está sendo analisada. 
+                        Você receberá uma notificação sobre o resultado.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-medium text-blue-900">Torne-se um Anunciante</h4>
+                      <p className="text-sm text-blue-700 mt-1">
+                        Solicite aprovação para criar anúncios e ser encontrado por clientes na plataforma.
+                      </p>
+                      <Button
+                        size="sm"
+                        className="mt-3"
+                        onClick={handleRequestUpgrade}
+                      >
+                        Solicitar Aprovação
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </CardContent>

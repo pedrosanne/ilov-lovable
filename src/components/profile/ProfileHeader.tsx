@@ -7,6 +7,7 @@ import { MessageCircle, Phone, Settings, Camera, MapPin, Calendar, Globe, Edit }
 import { EditProfileDialog } from './EditProfileDialog';
 import { CreatePostDialog } from './CreatePostDialog';
 import { CreateStoryDialog } from './CreateStoryDialog';
+import { MediaUpload } from '@/components/ui/media-upload';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -21,7 +22,7 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCreateStory, setShowCreateStory] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
+  const [showCoverUpload, setShowCoverUpload] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -36,12 +37,13 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile', profile.id] });
+      setShowCoverUpload(false);
       toast({
         title: "Foto de capa atualizada!",
         description: "Sua foto de capa foi alterada com sucesso.",
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Erro ao atualizar capa",
         description: "Não foi possível atualizar a foto de capa.",
@@ -49,38 +51,6 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
       });
     },
   });
-
-  const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setUploadingCover(true);
-    
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${profile.id}-cover-${Date.now()}.${fileExt}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(fileName);
-
-      await updateCoverMutation.mutateAsync(data.publicUrl);
-    } catch (error) {
-      toast({
-        title: "Erro no upload",
-        description: "Não foi possível fazer upload da imagem.",
-        variant: "destructive",
-      });
-    } finally {
-      setUploadingCover(false);
-    }
-  };
 
   const openWhatsApp = () => {
     if (profile.phone) {
@@ -100,40 +70,31 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
         {/* Cover Image */}
         <div className="relative">
           <div 
-            className="h-48 md:h-64 bg-gradient-to-r from-pink-400 via-red-400 to-yellow-400 relative"
+            className="h-48 md:h-80 bg-gradient-to-r from-pink-400 via-red-400 to-yellow-400 relative"
             style={{
               backgroundImage: profile.cover_image_url ? `url(${profile.cover_image_url})` : undefined,
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
           >
-            {/* Overlay for better text readability */}
-            <div className="absolute inset-0 bg-black/20"></div>
+            {/* Overlay para melhor legibilidade */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
             
             {isOwnProfile && (
               <div className="absolute top-4 right-4 flex gap-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCoverUpload}
-                  className="hidden"
-                  id="cover-upload"
-                />
-                <label htmlFor="cover-upload">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="bg-black/20 hover:bg-black/40 text-white cursor-pointer"
-                    disabled={uploadingCover}
-                  >
-                    <Camera className="h-4 w-4 mr-2" />
-                    {uploadingCover ? 'Enviando...' : 'Alterar Capa'}
-                  </Button>
-                </label>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="bg-black/20 hover:bg-black/40 text-white"
+                  className="bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm"
+                  onClick={() => setShowCoverUpload(!showCoverUpload)}
+                >
+                  <Camera className="h-4 w-4 mr-2" />
+                  Alterar Capa
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm"
                   onClick={() => setShowEditDialog(true)}
                 >
                   <Edit className="h-4 w-4 mr-2" />
@@ -141,28 +102,48 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
                 </Button>
               </div>
             )}
+
+            {/* Upload de capa */}
+            {isOwnProfile && showCoverUpload && (
+              <div className="absolute bottom-4 right-4 w-64">
+                <MediaUpload
+                  accept="image"
+                  maxSizeMB={5}
+                  onUploadComplete={(url) => updateCoverMutation.mutate(url)}
+                  showPreview={false}
+                  className="bg-white/90 backdrop-blur-sm p-3 rounded-lg"
+                />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Profile Info */}
-        <div className="px-4 md:px-6 pb-6">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 md:-mt-20 mb-4 gap-4">
-            <div className="flex flex-col md:flex-row md:items-end space-y-4 md:space-y-0 md:space-x-4">
-              <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-white shadow-lg mx-auto md:mx-0">
-                <AvatarImage src={profile.avatar_url} />
-                <AvatarFallback className="text-xl md:text-2xl">
-                  {profile.presentation_name?.charAt(0) || profile.full_name?.charAt(0) || profile.email?.charAt(0) || 'U'}
-                </AvatarFallback>
-              </Avatar>
+        {/* Profile Info - Corrigido para evitar sobreposição */}
+        <div className="px-4 md:px-6 pb-6 pt-4">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            {/* Avatar e informações básicas */}
+            <div className="flex flex-col md:flex-row md:items-start space-y-4 md:space-y-0 md:space-x-6">
+              {/* Avatar posicionado para não sobrepor */}
+              <div className="relative -mt-16 md:-mt-20 z-10">
+                <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-white shadow-lg mx-auto md:mx-0 bg-white">
+                  <AvatarImage src={profile.avatar_url} />
+                  <AvatarFallback className="text-xl md:text-2xl">
+                    {profile.presentation_name?.charAt(0) || profile.full_name?.charAt(0) || profile.email?.charAt(0) || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
               
-              <div className="text-center md:text-left md:pb-2">
+              {/* Informações do perfil */}
+              <div className="text-center md:text-left md:pt-4 flex-1 min-w-0">
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 break-words">
                   {profile.presentation_name || profile.full_name || 'Usuário'}
                 </h1>
                 {profile.profession && (
-                  <p className="text-base md:text-lg text-gray-600 break-words">{profile.profession}</p>
+                  <p className="text-base md:text-lg text-gray-600 break-words mt-1">{profile.profession}</p>
                 )}
-                <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mt-2 text-sm text-gray-500 gap-1 md:gap-0">
+                
+                {/* Informações adicionais */}
+                <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mt-3 text-sm text-gray-500 gap-1 md:gap-0">
                   {profile.location && (
                     <div className="flex items-center justify-center md:justify-start">
                       <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
@@ -187,7 +168,8 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-2 mt-4 md:mt-0">
+            {/* Botões de ação */}
+            <div className="flex flex-col md:flex-row gap-2 mt-4 md:mt-0 md:pt-4">
               {isOwnProfile ? (
                 <>
                   <Button 
@@ -239,11 +221,13 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
 
           {/* Bio */}
           {profile.bio && (
-            <p className="text-gray-700 mb-4 max-w-none md:max-w-2xl break-words">{profile.bio}</p>
+            <div className="mt-6">
+              <p className="text-gray-700 max-w-none md:max-w-2xl break-words">{profile.bio}</p>
+            </div>
           )}
 
           {/* Stats */}
-          <div className="flex justify-center md:justify-start space-x-8 mb-4">
+          <div className="flex justify-center md:justify-start space-x-8 mt-6">
             <div className="text-center">
               <div className="text-xl md:text-2xl font-bold text-gray-900">{profile.posts_count || 0}</div>
               <div className="text-sm text-gray-500">Posts</div>
@@ -259,7 +243,7 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
           </div>
 
           {/* Social Links */}
-          <div className="flex flex-wrap justify-center md:justify-start gap-2">
+          <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
             {profile.instagram_handle && (
               <Badge variant="secondary" className="cursor-pointer" onClick={openInstagram}>
                 @{profile.instagram_handle}

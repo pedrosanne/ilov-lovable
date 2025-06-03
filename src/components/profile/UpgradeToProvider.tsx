@@ -3,51 +3,20 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Star, TrendingUp, Shield, UserPlus } from 'lucide-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Check, Star, TrendingUp, Shield, UserPlus, Clock, AlertCircle } from 'lucide-react';
+import { useProviderUpgradeRequest } from '@/hooks/useProviderUpgrade';
 
 export function UpgradeToProvider() {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [isUpgrading, setIsUpgrading] = useState(false);
+  const [reason, setReason] = useState('');
+  const { currentRequest, createRequest, hasRequestPending } = useProviderUpgradeRequest();
 
-  const upgradeToProviderMutation = useMutation({
-    mutationFn: async () => {
-      if (!user) throw new Error('Usuário não encontrado');
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({ is_provider: true })
-        .eq('id', user.id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Parabéns! 🎉",
-        description: "Agora você é um anunciante! Crie seu primeiro anúncio.",
-      });
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      navigate('/create-ad');
-    },
-    onError: (error) => {
-      toast({
-        title: "Erro",
-        description: "Não foi possível fazer o upgrade. Tente novamente.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleUpgrade = () => {
-    setIsUpgrading(true);
-    upgradeToProviderMutation.mutate();
+  const handleSubmitRequest = () => {
+    if (reason.trim()) {
+      createRequest.mutate({ reason: reason.trim() });
+      setReason('');
+    }
   };
 
   const benefits = [
@@ -61,6 +30,48 @@ export function UpgradeToProvider() {
     "Relatórios de desempenho"
   ];
 
+  // Se já tem uma solicitação pendente
+  if (hasRequestPending) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <Card className="border-2 border-orange-200 bg-orange-50">
+          <CardHeader>
+            <CardTitle className="flex items-center text-orange-700">
+              <Clock className="h-6 w-6 mr-3" />
+              Solicitação em Análise
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+              <div>
+                <h4 className="font-medium text-orange-900">Aguardando Aprovação</h4>
+                <p className="text-orange-700 mt-1">
+                  Sua solicitação para se tornar anunciante foi enviada em{' '}
+                  {new Date(currentRequest?.created_at || '').toLocaleDateString('pt-BR')} e está 
+                  sendo analisada pela nossa equipe.
+                </p>
+                <p className="text-sm text-orange-600 mt-2">
+                  <strong>Sua justificativa:</strong> "{currentRequest?.reason}"
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-white/50 p-4 rounded-lg">
+              <h4 className="font-medium text-orange-900 mb-2">O que acontece agora?</h4>
+              <ul className="text-sm text-orange-700 space-y-1">
+                <li>• Nossa equipe irá analisar sua solicitação</li>
+                <li>• Verificaremos se seu perfil atende aos requisitos</li>
+                <li>• Você receberá uma notificação sobre o resultado</li>
+                <li>• O processo pode levar até 72 horas</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
@@ -71,11 +82,11 @@ export function UpgradeToProvider() {
           </div>
         </div>
         <h1 className="text-3xl font-bold text-gray-900">
-          Torne-se um Anunciante
+          Solicitar Perfil de Anunciante
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Expanda seus negócios e alcance milhares de clientes potenciais. 
-          Crie anúncios profissionais e gerencie seu perfil como prestador de serviços.
+          Envie uma solicitação para nossa equipe e, após aprovação, poderá criar anúncios 
+          profissionais e alcançar milhares de clientes potenciais.
         </p>
       </div>
 
@@ -145,30 +156,56 @@ export function UpgradeToProvider() {
         </div>
       </div>
 
-      {/* CTA */}
+      {/* Solicitação */}
       <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
-        <CardContent className="p-8 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            Pronto para começar?
-          </h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Comece hoje mesmo e transforme seu perfil em uma ferramenta poderosa 
-            para atrair novos clientes.
-          </p>
+        <CardHeader>
+          <CardTitle className="text-2xl text-center text-gray-900">
+            Solicitar Aprovação
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <Label htmlFor="reason" className="text-base font-medium">
+              Por que você quer se tornar um anunciante?
+            </Label>
+            <Textarea
+              id="reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Conte-nos sobre sua experiência, serviços que pretende oferecer, e por que deseja anunciar na nossa plataforma..."
+              className="mt-2 min-h-[120px]"
+              maxLength={500}
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              {reason.length}/500 caracteres
+            </p>
+          </div>
+
+          <div className="bg-white/70 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Processo de Aprovação</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Análise do perfil e justificativa</li>
+              <li>• Verificação de documentos (se necessário)</li>
+              <li>• Resposta em até 72 horas</li>
+              <li>• Notificação por email sobre o resultado</li>
+            </ul>
+          </div>
+
           <Button 
             size="lg" 
-            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-            onClick={handleUpgrade}
-            disabled={isUpgrading || upgradeToProviderMutation.isPending}
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            onClick={handleSubmitRequest}
+            disabled={!reason.trim() || createRequest.isPending}
           >
-            {isUpgrading || upgradeToProviderMutation.isPending ? (
-              "Processando..."
+            {createRequest.isPending ? (
+              "Enviando Solicitação..."
             ) : (
-              "Tornar-se Anunciante Agora"
+              "Enviar Solicitação para Análise"
             )}
           </Button>
-          <p className="text-sm text-gray-500 mt-3">
-            Gratuito para começar • Sem taxas ocultas
+          
+          <p className="text-sm text-gray-500 text-center">
+            Ao enviar, você concorda com nossos termos para anunciantes
           </p>
         </CardContent>
       </Card>
