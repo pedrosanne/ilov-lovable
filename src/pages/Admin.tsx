@@ -14,13 +14,11 @@ import {
   XCircle, 
   Eye,
   Shield,
-  BarChart3,
-  Settings,
   AlertTriangle
 } from 'lucide-react';
 import { 
   useAdminStats, 
-  usePendingAds, 
+  usePendingAds,
   usePendingDocuments,
   useApproveAd,
   useRejectAd,
@@ -288,76 +286,9 @@ const Admin = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {docsLoading ? (
-                  <p>Carregando...</p>
-                ) : pendingDocuments?.length === 0 ? (
-                  <p className="text-gray-500">Nenhum documento pendente</p>
-                ) : (
-                  <div className="space-y-4">
-                    {pendingDocuments?.map((doc) => (
-                      <div key={doc.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h3 className="font-semibold">{doc.document_type}</h3>
-                            <p className="text-gray-600">
-                              Enviado por: {doc.profiles?.full_name || doc.profiles?.email}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {new Date(doc.created_at).toLocaleDateString('pt-BR')}
-                            </p>
-                          </div>
-                          <Badge variant="secondary">Pendente</Badge>
-                        </div>
-
-                        <div className="mb-4">
-                          <img 
-                            src={doc.document_url} 
-                            alt="Documento"
-                            className="max-w-md h-48 object-cover rounded border"
-                          />
-                        </div>
-
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={() => handleApproveDocument(doc.id)}
-                            disabled={approveDocument.isPending}
-                          >
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Aprovar
-                          </Button>
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="destructive">
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Rejeitar
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Rejeitar Documento</DialogTitle>
-                              </DialogHeader>
-                              <div className="space-y-4">
-                                <Textarea
-                                  value={rejectReason}
-                                  onChange={(e) => setRejectReason(e.target.value)}
-                                  placeholder="Motivo da rejeição..."
-                                />
-                                <Button 
-                                  onClick={() => handleRejectDocument(doc.id)}
-                                  disabled={rejectDocument.isPending}
-                                  variant="destructive"
-                                  className="w-full"
-                                >
-                                  Confirmar Rejeição
-                                </Button>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <p className="text-gray-500">
+                  Esta funcionalidade será implementada após a criação da tabela verification_documents.
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
