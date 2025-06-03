@@ -1,6 +1,5 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 
 interface BrazilianCity {
   id: string;
@@ -16,17 +15,8 @@ export function useBrazilianCities() {
   return useQuery({
     queryKey: ['brazilian-cities'],
     queryFn: async () => {
-      // Usar rpc ou query raw para contornar a limitação dos tipos
-      const { data, error } = await supabase
-        .rpc('get_brazilian_cities');
-
-      if (error) {
-        console.error('Error fetching cities:', error);
-        // Fallback para dados estáticos se a função não existir
-        return getBrazilianCitiesFallback();
-      }
-
-      return data as BrazilianCity[];
+      // Usar dados estáticos das principais cidades brasileiras
+      return getBrazilianCitiesFallback();
     },
   });
 }
@@ -39,7 +29,7 @@ export function useSearchBrazilianCities(searchTerm: string) {
         return [];
       }
 
-      // Usar dados estáticos por enquanto para evitar problemas de tipos
+      // Usar dados estáticos para busca
       const cities = getBrazilianCitiesFallback();
       
       return cities
