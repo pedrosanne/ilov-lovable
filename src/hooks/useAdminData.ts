@@ -1,0 +1,239 @@
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+export function useAdminStats() {
+  return useQuery({
+    queryKey: ['admin-stats'],
+    queryFn: async () => {
+      // Total de usuários
+      const { count: totalUsers } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      // Anúncios pendentes
+      const { count: pendingAds } = await supabase
+        .from('ads')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending_approval');
+
+      // Documentos pendentes
+      const { count: pendingDocuments } = await supabase
+        .from('verification_documents')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending');
+
+      // Anúncios ativos
+      const { count: activeAds } = await supabase
+        .from('ads')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'active');
+
+      return {
+        totalUsers: totalUsers || 0,
+        pendingAds: pendingAds || 0,
+        pendingDocuments: pendingDocuments || 0,
+        activeAds: activeAds || 0,
+      };
+    },
+  });
+}
+
+export function usePendingAds() {
+  return useQuery({
+    queryKey: ['pending-ads'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ads')
+        .select(`
+          *,
+          profiles (
+            id,
+            full_name,
+            email,
+            avatar_url
+          )
+        `)
+        .eq('status', 'pending_approval')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
+export function usePendingDocuments() {
+  return useQuery({
+    queryKey: ['pending-documents'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('verification_documents')
+        .select(`
+          *,
+          profiles (
+            id,
+            full_name,
+            email
+          )
+        `)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
+export function useApproveAd() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ adId, adminNotes }: { adId: string; adminNotes?: string }) => {
+      const { data, error } = await supabase
+        .from('ads')
+        .update({
+          status: 'active',
+          approved_at: new Date().toISOString(),
+          admin_notes: adminNotes,
+        })
+        .eq('id', adId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pending-ads'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
+      toast({
+        title: "Anúncio aprovado!",
+        description: "O anúncio foi aprovado com sucesso.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao aprovar anúncio",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
+
+export function useRejectAd() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ adId, reason }: { adId: string; reason: string }) => {
+      const { data, error } = await supabase
+        .from('ads')
+        .update({
+          status: 'rejected',
+          rejected_reason: reason,
+        })
+        .eq('id', adId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pending-ads'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
+      toast({
+        title: "Anúncio rejeitado",
+        description: "O anúncio foi rejeitado.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao rejeitar anúncio",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
+
+export function useApproveDocument() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ documentId, adminNotes }: { documentId: string; adminNotes?: string }) => {
+      const { data, error } = await supabase
+        .from('verification_documents')
+        .update({
+          status: 'approved',
+          reviewed_at: new Date().toISOString(),
+          admin_notes: adminNotes,
+        })
+        .eq('id', documentId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pending-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
+      toast({
+        title: "Documento aprovado!",
+        description: "O documento foi aprovado com sucesso.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao aprovar documento",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
+
+export function useRejectDocument() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ documentId, reason }: { documentId: string; reason: string }) => {
+      const { data, error } = await supabase
+        .from('verification_documents')
+        .update({
+          status: 'rejected',
+          reviewed_at: new Date().toISOString(),
+          admin_notes: reason,
+        })
+        .eq('id', documentId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pending-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
+      toast({
+        title: "Documento rejeitado",
+        description: "O documento foi rejeitado.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao rejeitar documento",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}

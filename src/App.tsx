@@ -16,6 +16,7 @@ import MyAds from "./pages/MyAds";
 import Messages from "./pages/Messages";
 import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/messages" element={<Messages />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/profile/:userId?" element={<Profile />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -1,129 +1,152 @@
 
-import { Link } from 'react-router-dom';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, MessageCircle, MapPin, Heart, Eye, Navigation } from 'lucide-react';
-import { useRecordClick } from '@/hooks/useAds';
+import { Button } from '@/components/ui/button';
+import { MapPin, Phone, Eye, Shield, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { useRecordView, useRecordClick } from '@/hooks/useAds';
+import { IdentityVerificationVideo } from './IdentityVerificationVideo';
+
+interface Ad {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  location: string;
+  city?: string;
+  state?: string;
+  image_url: string;
+  whatsapp: string;
+  user_id: string;
+  views_count: number;
+  distance_km?: number;
+  created_at: string;
+  identity_verification_video_url?: string;
+  identity_verification_status?: string;
+}
 
 interface AdvancedAdCardProps {
-  ad: {
-    id: string;
-    title: string;
-    description: string;
-    price: number;
-    category: string;
-    location: string;
-    city?: string;
-    state?: string;
-    image_url?: string;
-    whatsapp: string;
-    user_id: string;
-    views_count: number;
-    distance_km?: number;
-  };
+  ad: Ad;
 }
 
 export function AdvancedAdCard({ ad }: AdvancedAdCardProps) {
+  const recordView = useRecordView();
   const recordClick = useRecordClick();
 
-  const handleWhatsAppClick = () => {
-    recordClick.mutate(ad.id);
-    const message = `Olá! Tenho interesse no serviço: ${ad.title}`;
-    const whatsappUrl = `https://wa.me/55${ad.whatsapp}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+  const handleCardClick = () => {
+    recordView.mutate(ad.id);
+    window.location.href = `/ad/${ad.id}`;
   };
 
-  const getCategoryLabel = (category: string) => {
-    const categories = {
-      beleza: 'Beleza',
-      saude: 'Saúde',
-      casa: 'Casa',
-      tecnologia: 'Tecnologia',
-      educacao: 'Educação',
-      servicos_gerais: 'Serviços Gerais',
-      consultoria: 'Consultoria',
-      eventos: 'Eventos',
-      acompanhante: 'Acompanhante'
-    };
-    return categories[category as keyof typeof categories] || category;
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    recordClick.mutate(ad.id);
+    window.open(`https://wa.me/${ad.whatsapp}`, '_blank');
+  };
+
+  const getVerificationIcon = () => {
+    switch (ad.identity_verification_status) {
+      case 'approved':
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'rejected':
+        return <XCircle className="h-4 w-4 text-red-600" />;
+      default:
+        return <Clock className="h-4 w-4 text-yellow-600" />;
+    }
+  };
+
+  const getVerificationBadge = () => {
+    switch (ad.identity_verification_status) {
+      case 'approved':
+        return (
+          <Badge className="bg-green-100 text-green-800 border-green-200">
+            <Shield className="h-3 w-3 mr-1" />
+            Verificado
+          </Badge>
+        );
+      case 'rejected':
+        return (
+          <Badge className="bg-red-100 text-red-800 border-red-200">
+            <XCircle className="h-3 w-3 mr-1" />
+            Não Verificado
+          </Badge>
+        );
+      default:
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+            <Clock className="h-3 w-3 mr-1" />
+            Verificação Pendente
+          </Badge>
+        );
+    }
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
-      <div className="relative">
-        <img 
-          src={ad.image_url || '/placeholder.svg'} 
-          alt={ad.title}
-          className="w-full h-48 object-cover rounded-t-lg"
-        />
-        <button className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50">
-          <Heart className="h-4 w-4 text-gray-600" />
-        </button>
-        <Badge className="absolute top-2 left-2" variant="secondary">
-          {getCategoryLabel(ad.category)}
-        </Badge>
-        
-        {ad.distance_km && (
-          <Badge className="absolute bottom-2 right-2 bg-blue-600" variant="default">
-            <Navigation className="h-3 w-3 mr-1" />
-            {ad.distance_km}km
-          </Badge>
-        )}
-      </div>
+    <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={handleCardClick}>
+      <CardHeader className="p-0">
+        <div className="relative">
+          <img
+            src={ad.image_url || '/placeholder.svg'}
+            alt={ad.title}
+            className="w-full h-48 object-cover rounded-t-lg"
+          />
+          <div className="absolute top-2 left-2">
+            <Badge variant="secondary">{ad.category}</Badge>
+          </div>
+          <div className="absolute top-2 right-2">
+            {getVerificationBadge()}
+          </div>
+          {ad.distance_km && ad.distance_km > 0 && (
+            <div className="absolute bottom-2 left-2">
+              <Badge className="bg-black/70 text-white">
+                {ad.distance_km} km
+              </Badge>
+            </div>
+          )}
+        </div>
+      </CardHeader>
       
       <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
-            {ad.title}
-          </h3>
-          <div className="flex items-center space-x-1">
-            <Eye className="h-4 w-4 text-gray-400" />
-            <span className="text-sm text-gray-600">{ad.views_count}</span>
-          </div>
-        </div>
+        <CardTitle className="text-lg mb-2 line-clamp-2">{ad.title}</CardTitle>
         
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+        <p className="text-gray-600 text-sm mb-3 line-clamp-3">
           {ad.description}
         </p>
         
-        <div className="flex items-center text-sm text-gray-500 mb-3">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-2xl font-bold text-green-600">
+            R$ {ad.price.toLocaleString('pt-BR')}
+          </span>
+          <div className="flex items-center text-gray-500 text-sm">
+            <Eye className="h-4 w-4 mr-1" />
+            {ad.views_count}
+          </div>
+        </div>
+        
+        <div className="flex items-center text-gray-500 text-sm mb-4">
           <MapPin className="h-4 w-4 mr-1" />
           {ad.city && ad.state ? `${ad.city}, ${ad.state}` : ad.location}
         </div>
-        
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-2xl font-bold text-gray-900">
-              R$ {Number(ad.price).toFixed(2)}
-            </span>
+
+        {/* Seção de verificação de identidade */}
+        {ad.identity_verification_video_url && (
+          <div className="mb-4">
+            <IdentityVerificationVideo
+              videoUrl={ad.identity_verification_video_url}
+              status={ad.identity_verification_status}
+              showTitle={false}
+            />
           </div>
-          {ad.distance_km && (
-            <span className="text-sm text-blue-600 font-medium">
-              {ad.distance_km}km de distância
-            </span>
-          )}
-        </div>
+        )}
+        
+        <Button 
+          className="w-full"
+          onClick={handleWhatsAppClick}
+        >
+          <Phone className="h-4 w-4 mr-2" />
+          Entrar em Contato
+        </Button>
       </CardContent>
-      
-      <CardFooter className="p-4 pt-0 space-y-2">
-        <div className="grid grid-cols-2 gap-2 w-full">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleWhatsAppClick}
-            className="flex items-center"
-          >
-            <MessageCircle className="h-4 w-4 mr-1" />
-            WhatsApp
-          </Button>
-          <Button size="sm" asChild>
-            <Link to={`/ad/${ad.id}`}>
-              Ver Detalhes
-            </Link>
-          </Button>
-        </div>
-      </CardFooter>
     </Card>
   );
 }

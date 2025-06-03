@@ -1,17 +1,18 @@
 
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, User, PlusCircle, LogOut, UserCircle } from 'lucide-react';
+import { Heart, User, PlusCircle, LogOut, UserCircle, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
 export function Header() {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -71,6 +72,18 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <Link to="/dashboard">Dashboard</Link>
                     </DropdownMenuItem>
+                    {profile?.is_admin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin">
+                            <Shield className="h-4 w-4 mr-2" />
+                            Painel Admin
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="h-4 w-4 mr-2" />
                       Sair
