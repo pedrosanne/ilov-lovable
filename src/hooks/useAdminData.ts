@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -32,7 +33,7 @@ export function useAdminStats() {
       return {
         totalUsers: totalUsers || 0,
         pendingAds: pendingAds || 0,
-        pendingDocuments: pendingUpgrades || 0, // Usando upgrades como "documentos" por enquanto
+        pendingDocuments: pendingUpgrades || 0,
         activeAds: activeAds || 0,
         pendingUpgrades: pendingUpgrades || 0,
       };
@@ -73,7 +74,7 @@ export function usePendingDocuments() {
         .from('provider_upgrade_requests')
         .select(`
           *,
-          profiles!provider_upgrade_requests_user_id_fkey (
+          profiles (
             id,
             full_name,
             email,
@@ -163,44 +164,7 @@ export function useRejectAd() {
   });
 }
 
-// Placeholder functions para documentos até a tabela ser criada
-export function useApproveDocument() {
-  const { toast } = useToast();
-
-  return useMutation({
-    mutationFn: async ({ documentId, adminNotes }: { documentId: string; adminNotes?: string }) => {
-      // Placeholder - será implementado quando a tabela verification_documents for criada
-      console.log('Approve document:', documentId, adminNotes);
-      return { success: true };
-    },
-    onSuccess: () => {
-      toast({
-        title: "Documento aprovado!",
-        description: "O documento foi aprovado com sucesso.",
-      });
-    },
-  });
-}
-
-export function useRejectDocument() {
-  const { toast } = useToast();
-
-  return useMutation({
-    mutationFn: async ({ documentId, reason }: { documentId: string; reason: string }) => {
-      // Placeholder - será implementado quando a tabela verification_documents for criada
-      console.log('Reject document:', documentId, reason);
-      return { success: true };
-    },
-    onSuccess: () => {
-      toast({
-        title: "Documento rejeitado",
-        description: "O documento foi rejeitado.",
-      });
-    },
-  });
-}
-
-// Adicionar funções específicas para upgrade requests
+// Usar os hooks específicos para upgrade requests
 export function usePendingUpgradeRequests() {
   return useQuery({
     queryKey: ['pending-upgrade-requests'],
@@ -209,7 +173,7 @@ export function usePendingUpgradeRequests() {
         .from('provider_upgrade_requests')
         .select(`
           *,
-          profiles!provider_upgrade_requests_user_id_fkey (
+          profiles (
             id,
             full_name,
             email,
@@ -311,6 +275,43 @@ export function useRejectUpgradeRequest() {
         title: "Erro",
         description: "Não foi possível rejeitar a solicitação.",
         variant: "destructive",
+      });
+    },
+  });
+}
+
+// Placeholder functions para documentos até a tabela ser criada
+export function useApproveDocument() {
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ documentId, adminNotes }: { documentId: string; adminNotes?: string }) => {
+      // Placeholder - será implementado quando a tabela verification_documents for criada
+      console.log('Approve document:', documentId, adminNotes);
+      return { success: true };
+    },
+    onSuccess: () => {
+      toast({
+        title: "Documento aprovado!",
+        description: "O documento foi aprovado com sucesso.",
+      });
+    },
+  });
+}
+
+export function useRejectDocument() {
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ documentId, reason }: { documentId: string; reason: string }) => {
+      // Placeholder - será implementado quando a tabela verification_documents for criada
+      console.log('Reject document:', documentId, reason);
+      return { success: true };
+    },
+    onSuccess: () => {
+      toast({
+        title: "Documento rejeitado",
+        description: "O documento foi rejeitado.",
       });
     },
   });

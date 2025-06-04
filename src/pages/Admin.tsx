@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -173,19 +174,6 @@ const Admin = () => {
                           <Badge variant="secondary">Pendente</Badge>
                         </div>
 
-                        {/* Temporariamente removido até o campo existir na DB */}
-                        {/* {ad.identity_verification_video_url && (
-                          <div className="mb-4">
-                            <h4 className="font-medium mb-2 flex items-center gap-2">
-                              <Shield className="h-4 w-4" />
-                              Vídeo de Verificação
-                            </h4>
-                            <video controls className="w-full max-w-md h-32 object-cover rounded">
-                              <source src={ad.identity_verification_video_url} type="video/mp4" />
-                            </video>
-                          </div>
-                        )} */}
-
                         <div className="flex gap-2">
                           <Dialog>
                             <DialogTrigger asChild>
@@ -298,11 +286,13 @@ const Admin = () => {
                         <div className="flex justify-between items-start mb-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                              <img 
-                                src={request.profiles?.avatar_url} 
-                                alt="Avatar" 
-                                className="w-10 h-10 rounded-full object-cover"
-                              />
+                              {request.profiles?.avatar_url && (
+                                <img 
+                                  src={request.profiles.avatar_url} 
+                                  alt="Avatar" 
+                                  className="w-10 h-10 rounded-full object-cover"
+                                />
+                              )}
                               <div>
                                 <h3 className="font-semibold text-lg">
                                   {request.profiles?.presentation_name || request.profiles?.full_name}
@@ -339,11 +329,13 @@ const Admin = () => {
                               {selectedRequest && (
                                 <div className="space-y-4">
                                   <div className="flex items-center gap-3">
-                                    <img 
-                                      src={selectedRequest.profiles?.avatar_url} 
-                                      alt="Avatar" 
-                                      className="w-16 h-16 rounded-full object-cover"
-                                    />
+                                    {selectedRequest.profiles?.avatar_url && (
+                                      <img 
+                                        src={selectedRequest.profiles.avatar_url} 
+                                        alt="Avatar" 
+                                        className="w-16 h-16 rounded-full object-cover"
+                                      />
+                                    )}
                                     <div>
                                       <h3 className="font-semibold text-lg">
                                         {selectedRequest.profiles?.presentation_name || selectedRequest.profiles?.full_name}
@@ -417,22 +409,6 @@ const Admin = () => {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="documents" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Documentos de Verificação</CardTitle>
-                <CardDescription>
-                  Revise os documentos enviados pelos usuários para verificação de identidade
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500">
-                  Esta funcionalidade será implementada após a criação da tabela verification_documents.
-                </p>
               </CardContent>
             </Card>
           </TabsContent>

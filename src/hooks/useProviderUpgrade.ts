@@ -2,30 +2,39 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 export function useProviderUpgradeRequest() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const { data: currentRequest, isLoading } = useQuery({
     queryKey: ['provider-upgrade-request'],
     queryFn: async () => {
+      if (!user) return null;
+      
       const { data, error } = await supabase
         .from('provider_upgrade_requests')
         .select('*')
+        .eq('user_id', user.id)
         .eq('status', 'pending')
         .maybeSingle();
 
       if (error) throw error;
       return data;
     },
+    enabled: !!user,
   });
 
   const createRequest = useMutation({
     mutationFn: async ({ reason }: { reason: string }) => {
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
         .from('provider_upgrade_requests')
         .insert({
+          user_id: user.id,
           reason,
           status: 'pending'
         })
@@ -70,11 +79,12 @@ export function useAdminUpgradeRequests() {
         .from('provider_upgrade_requests')
         .select(`
           *,
-          profiles!provider_upgrade_requests_user_id_fkey (
+          profiles (
             id,
             full_name,
             email,
-            avatar_url
+            avatar_url,
+            presentation_name
           )
         `)
         .eq('status', 'pending')
