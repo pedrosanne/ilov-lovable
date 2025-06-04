@@ -62,7 +62,7 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
                   {profile.presentation_name || profile.full_name}
                 </h1>
                 {profile.is_verified && (
-                  <ShieldCheck className="h-6 w-6 text-blue-500" title="Perfil verificado" />
+                  <ShieldCheck className="h-6 w-6 text-blue-500" />
                 )}
               </div>
               
