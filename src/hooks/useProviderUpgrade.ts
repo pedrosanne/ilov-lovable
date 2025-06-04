@@ -79,7 +79,7 @@ export function useAdminUpgradeRequests() {
         .from('provider_upgrade_requests')
         .select(`
           *,
-          profiles (
+          profiles!provider_upgrade_requests_user_id_fkey (
             id,
             full_name,
             email,
