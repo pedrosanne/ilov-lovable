@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { IdentityVerification } from './IdentityVerification';
 
 export function ProfileSettings() {
   const { user, signOut } = useAuth();
@@ -85,6 +86,9 @@ export function ProfileSettings() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      {/* Identity Verification Section */}
+      <IdentityVerification />
+
       {/* Notifications */}
       <Card>
         <CardHeader>

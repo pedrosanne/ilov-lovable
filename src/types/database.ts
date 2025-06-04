@@ -11,6 +11,7 @@ export interface Database {
           cover_image_url: string | null
           is_provider: boolean
           is_admin: boolean
+          is_verified: boolean
           created_at: string
           updated_at: string
           presentation_name: string | null
@@ -34,6 +35,7 @@ export interface Database {
           cover_image_url?: string | null
           is_provider?: boolean
           is_admin?: boolean
+          is_verified?: boolean
           presentation_name?: string | null
           bio?: string | null
           location?: string | null
@@ -54,6 +56,7 @@ export interface Database {
           cover_image_url?: string | null
           is_provider?: boolean
           is_admin?: boolean
+          is_verified?: boolean
           presentation_name?: string | null
           bio?: string | null
           location?: string | null
@@ -65,6 +68,46 @@ export interface Database {
           followers_count?: number | null
           following_count?: number | null
           posts_count?: number | null
+        }
+      }
+      identity_verifications: {
+        Row: {
+          id: string
+          user_id: string
+          document_type: 'rg' | 'cnh' | 'passport'
+          document_front_url: string
+          document_back_url: string | null
+          selfie_with_document_url: string
+          verification_video_url: string
+          status: 'pending' | 'approved' | 'rejected'
+          rejection_reason: string | null
+          reviewed_by: string | null
+          reviewed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          document_type: 'rg' | 'cnh' | 'passport'
+          document_front_url: string
+          document_back_url?: string | null
+          selfie_with_document_url: string
+          verification_video_url: string
+          status?: 'pending' | 'approved' | 'rejected'
+          rejection_reason?: string | null
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+        }
+        Update: {
+          document_type?: 'rg' | 'cnh' | 'passport'
+          document_front_url?: string
+          document_back_url?: string | null
+          selfie_with_document_url?: string
+          verification_video_url?: string
+          status?: 'pending' | 'approved' | 'rejected'
+          rejection_reason?: string | null
+          reviewed_by?: string | null
+          reviewed_at?: string | null
         }
       }
       conversations: {

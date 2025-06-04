@@ -374,6 +374,69 @@ export type Database = {
         }
         Relationships: []
       }
+      identity_verifications: {
+        Row: {
+          created_at: string
+          document_back_url: string | null
+          document_front_url: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          selfie_with_document_url: string
+          status: Database["public"]["Enums"]["verification_status"]
+          updated_at: string
+          user_id: string
+          verification_video_url: string
+        }
+        Insert: {
+          created_at?: string
+          document_back_url?: string | null
+          document_front_url: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          selfie_with_document_url: string
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+          user_id: string
+          verification_video_url: string
+        }
+        Update: {
+          created_at?: string
+          document_back_url?: string | null
+          document_front_url?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          selfie_with_document_url?: string
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+          user_id?: string
+          verification_video_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "identity_verifications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "identity_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -600,6 +663,7 @@ export type Database = {
           instagram_handle: string | null
           is_admin: boolean | null
           is_provider: boolean | null
+          is_verified: boolean | null
           location: string | null
           phone: string | null
           posts_count: number | null
@@ -623,6 +687,7 @@ export type Database = {
           instagram_handle?: string | null
           is_admin?: boolean | null
           is_provider?: boolean | null
+          is_verified?: boolean | null
           location?: string | null
           phone?: string | null
           posts_count?: number | null
@@ -646,6 +711,7 @@ export type Database = {
           instagram_handle?: string | null
           is_admin?: boolean | null
           is_provider?: boolean | null
+          is_verified?: boolean | null
           location?: string | null
           phone?: string | null
           posts_count?: number | null
@@ -803,6 +869,8 @@ export type Database = {
         | "consultoria"
         | "eventos"
         | "acompanhante"
+      document_type: "rg" | "cnh" | "passport"
+      verification_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -930,6 +998,8 @@ export const Constants = {
         "eventos",
         "acompanhante",
       ],
+      document_type: ["rg", "cnh", "passport"],
+      verification_status: ["pending", "approved", "rejected"],
     },
   },
 } as const
