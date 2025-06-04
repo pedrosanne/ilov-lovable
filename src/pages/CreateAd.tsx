@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Eye } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
+import { VerificationRequired } from '@/components/verification/VerificationRequired';
 import { PersonalInfoStep } from '@/components/create-ad/PersonalInfoStep';
 import { DescriptionStep } from '@/components/create-ad/DescriptionStep';
 import { ServicesStep } from '@/components/create-ad/ServicesStep';
@@ -88,80 +88,85 @@ const CreateAd = () => {
       <Header />
       
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Criar Novo Anúncio
-          </h1>
-          <p className="text-gray-600">
-            Preencha todas as informações para criar seu anúncio profissional
-          </p>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              Etapa {currentStep} de {steps.length}
-            </span>
-            <span className="text-sm text-gray-500">
-              {Math.round((currentStep / steps.length) * 100)}% concluído
-            </span>
+        <VerificationRequired 
+          feature="a criação de anúncios"
+          description="Para publicar anúncios em nossa plataforma, é necessário verificar sua identidade. Isso garante a segurança e confiabilidade do marketplace."
+        >
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Criar Novo Anúncio
+            </h1>
+            <p className="text-gray-600">
+              Preencha todas as informações para criar seu anúncio profissional
+            </p>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / steps.length) * 100}%` }}
-            ></div>
+
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">
+                Etapa {currentStep} de {steps.length}
+              </span>
+              <span className="text-sm text-gray-500">
+                {Math.round((currentStep / steps.length) * 100)}% concluído
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / steps.length) * 100}%` }}
+              ></div>
+            </div>
           </div>
-        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <span>{currentStepData.title}</span>
-              {currentStep === 13 && <Eye className="h-5 w-5" />}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CurrentStepComponent 
-              formData={formData}
-              updateFormData={updateFormData}
-            />
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <span>{currentStepData.title}</span>
+                {currentStep === 13 && <Eye className="h-5 w-5" />}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CurrentStepComponent 
+                formData={formData}
+                updateFormData={updateFormData}
+              />
+            </CardContent>
+          </Card>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentStep === 1}
-            className="flex items-center space-x-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Anterior</span>
-          </Button>
+          {/* Navigation Buttons */}
+          <div className="flex justify-between mt-8">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentStep === 1}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Anterior</span>
+            </Button>
 
-          <div className="flex space-x-4">
-            {currentStep === steps.length ? (
-              <Button
-                onClick={handleSubmit}
-                disabled={!isValid || isSubmitting}
-                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
-              >
-                <span>{isSubmitting ? 'Publicando...' : 'Publicar Anúncio'}</span>
-              </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                className="flex items-center space-x-2"
-              >
-                <span>Próximo</span>
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            )}
+            <div className="flex space-x-4">
+              {currentStep === steps.length ? (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!isValid || isSubmitting}
+                  className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+                >
+                  <span>{isSubmitting ? 'Publicando...' : 'Publicar Anúncio'}</span>
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleNext}
+                  className="flex items-center space-x-2"
+                >
+                  <span>Próximo</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
+        </VerificationRequired>
       </div>
     </div>
   );
