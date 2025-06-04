@@ -37,40 +37,51 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-6 overflow-hidden">
+      {/* Cover Image */}
       <div 
-        className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-lg"
+        className="h-32 md:h-48 bg-gradient-to-r from-blue-500 to-purple-600"
         style={{
           backgroundImage: profile.cover_image_url ? `url(${profile.cover_image_url})` : undefined,
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
       />
-      <CardContent className="relative pb-6">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 md:-mt-12">
-          <div className="flex flex-col md:flex-row md:items-end md:space-x-4">
-            <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-white shadow-lg">
-              <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
-              <AvatarFallback className="text-lg md:text-xl">
-                {getInitials(profile.full_name)}
-              </AvatarFallback>
-            </Avatar>
+      
+      <CardContent className="relative px-4 md:px-6 pb-6">
+        {/* Profile Layout */}
+        <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-end md:justify-between">
+          {/* Left Section - Avatar and Info */}
+          <div className="flex flex-col md:flex-row md:items-end md:space-x-6">
+            {/* Avatar */}
+            <div className="relative -mt-12 md:-mt-16 mb-4 md:mb-0">
+              <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-white shadow-lg">
+                <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
+                <AvatarFallback className="text-lg md:text-xl">
+                  {getInitials(profile.full_name)}
+                </AvatarFallback>
+              </Avatar>
+            </div>
             
-            <div className="mt-4 md:mt-0 md:mb-4">
-              <div className="flex items-center space-x-2">
-                <h1 className="text-2xl font-bold text-gray-900">
+            {/* Profile Info */}
+            <div className="flex-1 md:mb-4">
+              {/* Name and Verification */}
+              <div className="flex items-center space-x-2 mb-1">
+                <h1 className="text-xl md:text-2xl font-bold text-gray-900">
                   {profile.presentation_name || profile.full_name}
                 </h1>
                 {profile.is_verified && (
-                  <ShieldCheck className="h-6 w-6 text-blue-500" />
+                  <ShieldCheck className="h-5 w-5 md:h-6 md:w-6 text-blue-500 flex-shrink-0" />
                 )}
               </div>
               
+              {/* Profession */}
               {profile.profession && (
-                <p className="text-gray-600 mt-1">{profile.profession}</p>
+                <p className="text-gray-600 mb-2">{profile.profession}</p>
               )}
               
-              <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-500">
+              {/* Location and Join Date */}
+              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-2">
                 {profile.location && (
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-1" />
@@ -84,7 +95,8 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
                 </div>
               </div>
 
-              <div className="flex items-center space-x-4 mt-3">
+              {/* Stats */}
+              <div className="flex items-center space-x-4 mb-3">
                 <span className="text-sm">
                   <strong>{profile.posts_count || 0}</strong> posts
                 </span>
@@ -97,7 +109,7 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
               </div>
 
               {/* Badges */}
-              <div className="flex flex-wrap gap-2 mt-3">
+              <div className="flex flex-wrap gap-2">
                 {profile.is_provider && (
                   <Badge variant="secondary">Anunciante</Badge>
                 )}
@@ -108,9 +120,10 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
             </div>
           </div>
 
-          <div className="flex space-x-2 mt-4 md:mt-0">
+          {/* Right Section - Action Button */}
+          <div className="flex justify-center md:justify-end md:mb-4">
             {isOwnProfile ? (
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className="w-full md:w-auto">
                 <Link to="/profile?tab=settings">
                   <Settings className="h-4 w-4 mr-2" />
                   Editar Perfil
@@ -118,7 +131,7 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
               </Button>
             ) : (
               onStartConversation && (
-                <Button onClick={onStartConversation}>
+                <Button onClick={onStartConversation} className="w-full md:w-auto">
                   <MessageCircle className="h-4 w-4 mr-2" />
                   Enviar Mensagem
                 </Button>
@@ -127,15 +140,16 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
           </div>
         </div>
 
+        {/* Bio */}
         {profile.bio && (
-          <div className="mt-6">
+          <div className="mt-4 pt-4 border-t">
             <p className="text-gray-700">{profile.bio}</p>
           </div>
         )}
 
-        {/* Links sociais */}
+        {/* Social Links */}
         {(profile.website || profile.instagram_handle || profile.twitter_handle) && (
-          <div className="flex flex-wrap gap-4 mt-4">
+          <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t">
             {profile.website && (
               <a
                 href={profile.website}

@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Star, MessageCircle, MapPin, Heart, Eye, Shield } from 'lucide-react';
+import { Star, MessageCircle, MapPin, Heart, Eye } from 'lucide-react';
 import { Ad } from '@/types/database';
 import { useRecordClick } from '@/hooks/useAds';
-import { useVerificationStatus } from '@/hooks/useVerificationStatus';
-import { useState } from 'react';
+import { useVerificationModal } from '@/hooks/useVerificationModal';
+import { VerificationModal } from '@/components/verification/VerificationModal';
 
 interface AdCardProps {
   ad: Ad;
@@ -16,19 +15,15 @@ interface AdCardProps {
 
 export function AdCard({ ad }: AdCardProps) {
   const recordClick = useRecordClick();
-  const { isVerified } = useVerificationStatus();
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const { showModal, closeModal, checkVerificationAndExecute, isVerified } = useVerificationModal();
 
   const handleWhatsAppClick = () => {
-    if (!isVerified) {
-      setShowVerificationModal(true);
-      return;
-    }
-    
-    recordClick.mutate(ad.id);
-    const message = `Olá! Tenho interesse no serviço: ${ad.title}`;
-    const whatsappUrl = `https://wa.me/55${ad.whatsapp}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    checkVerificationAndExecute(() => {
+      recordClick.mutate(ad.id);
+      const message = `Olá! Tenho interesse no serviço: ${ad.title}`;
+      const whatsappUrl = `https://wa.me/55${ad.whatsapp}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    });
   };
 
   const getCategoryLabel = (category: string) => {
@@ -114,48 +109,11 @@ export function AdCard({ ad }: AdCardProps) {
         </CardFooter>
       </Card>
 
-      {/* Modal de verificação necessária */}
-      <Dialog open={showVerificationModal} onOpenChange={setShowVerificationModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <Shield className="h-5 w-5 text-blue-500" />
-              <span>Verificação Necessária</span>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              Para entrar em contato via WhatsApp, você precisa verificar sua identidade primeiro.
-            </p>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-900 mb-2">Por que verificar?</h4>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Maior segurança para todos</li>
-                <li>• Redução de perfis falsos</li>
-                <li>• Ambiente mais confiável</li>
-              </ul>
-            </div>
-            <div className="flex space-x-2">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowVerificationModal(false)}
-                className="flex-1"
-              >
-                Cancelar
-              </Button>
-              <Button 
-                onClick={() => {
-                  setShowVerificationModal(false);
-                  window.location.href = '/profile?tab=settings';
-                }}
-                className="flex-1"
-              >
-                Verificar Agora
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <VerificationModal
+        open={showModal}
+        onOpenChange={closeModal}
+        actionType="contato via WhatsApp"
+      />
     </>
   );
 }

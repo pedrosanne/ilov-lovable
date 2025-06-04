@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -15,9 +14,11 @@ import { FavoritesSection } from '@/components/profile/FavoritesSection';
 import { UpgradeToProvider } from '@/components/profile/UpgradeToProvider';
 import { ProfileSettings } from '@/components/profile/ProfileSettings';
 import { MessagesSystem } from '@/components/messages/MessagesSystem';
+import { VerificationModal } from '@/components/verification/VerificationModal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
+import { useVerificationModal } from '@/hooks/useVerificationModal';
 
 const Profile = () => {
   const { userId } = useParams();
@@ -25,6 +26,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('posts');
   const [profileViewType, setProfileViewType] = useState<'client' | 'provider'>('client');
   const [showMessages, setShowMessages] = useState(false);
+  const { showModal, closeModal, checkVerificationAndExecute } = useVerificationModal();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', userId],
@@ -94,7 +96,14 @@ const Profile = () => {
   const showProviderProfile = profileViewType === 'provider' && profile.is_provider;
 
   const handleStartConversation = () => {
-    setShowMessages(true);
+    if (isOwnProfile) {
+      setShowMessages(true);
+      return;
+    }
+
+    checkVerificationAndExecute(() => {
+      setShowMessages(true);
+    });
   };
 
   const renderTabContent = () => {
@@ -172,6 +181,13 @@ const Profile = () => {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Modal de verificação */}
+      <VerificationModal
+        open={showModal}
+        onOpenChange={closeModal}
+        actionType="mensagens"
+      />
     </div>
   );
 };
