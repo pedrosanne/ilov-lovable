@@ -2,15 +2,12 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Camera, Video, Grid3x3, Film } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { PostFormFields } from './post/PostFormFields';
+import { PostMediaUpload } from './post/PostMediaUpload';
 
 interface CreatePostDialogProps {
   open: boolean;
@@ -93,100 +90,19 @@ export function CreatePostDialog({ open, onOpenChange }: CreatePostDialogProps) 
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* User Info */}
-          <div className="flex items-center space-x-3">
-            <Avatar>
-              <AvatarImage src={user?.user_metadata?.avatar_url} />
-              <AvatarFallback>
-                {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-semibold">
-                {user?.user_metadata?.presentation_name || user?.user_metadata?.full_name || 'Você'}
-              </p>
-            </div>
-          </div>
+          <PostFormFields
+            content={content}
+            onContentChange={setContent}
+            user={user}
+          />
 
-          {/* Content */}
-          <div>
-            <Label htmlFor="content">O que você está pensando?</Label>
-            <Textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Compartilhe algo interessante..."
-              rows={4}
-              className="resize-none"
-            />
-          </div>
-
-          {/* Media Type Selection */}
-          {mediaUrls.length > 0 && (
-            <div>
-              <Label>Tipo de Mídia</Label>
-              <Select value={mediaType} onValueChange={(value: any) => setMediaType(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="photo">
-                    <div className="flex items-center">
-                      <Camera className="h-4 w-4 mr-2" />
-                      Foto
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="video">
-                    <div className="flex items-center">
-                      <Video className="h-4 w-4 mr-2" />
-                      Vídeo
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="carousel">
-                    <div className="flex items-center">
-                      <Grid3x3 className="h-4 w-4 mr-2" />
-                      Carrossel
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="reel">
-                    <div className="flex items-center">
-                      <Film className="h-4 w-4 mr-2" />
-                      Reel
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* Media URLs */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <Label>Mídia</Label>
-              <Button type="button" variant="outline" size="sm" onClick={addMediaUrl}>
-                <Camera className="h-4 w-4 mr-2" />
-                Adicionar Mídia
-              </Button>
-            </div>
-            
-            {mediaUrls.length > 0 && (
-              <div className="space-y-2">
-                {mediaUrls.map((url, index) => (
-                  <div key={index} className="flex items-center space-x-2 p-2 bg-gray-50 rounded">
-                    <span className="flex-1 text-sm truncate">{url}</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeMediaUrl(index)}
-                    >
-                      ×
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <PostMediaUpload
+            mediaUrls={mediaUrls}
+            mediaType={mediaType}
+            onMediaTypeChange={setMediaType}
+            onAddMedia={addMediaUrl}
+            onRemoveMedia={removeMediaUrl}
+          />
 
           <div className="flex justify-end space-x-2 pt-4">
             <Button 
