@@ -2,14 +2,11 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MediaUpload } from '@/components/ui/media-upload';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { ProfileAvatarUpload } from './edit/ProfileAvatarUpload';
+import { ProfileFormFields, ProfileFormData } from './edit/ProfileFormFields';
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -18,7 +15,7 @@ interface EditProfileDialogProps {
 }
 
 export function EditProfileDialog({ open, onOpenChange, profile }: EditProfileDialogProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProfileFormData>({
     full_name: profile.full_name || '',
     presentation_name: profile.presentation_name || '',
     bio: profile.bio || '',
@@ -35,7 +32,7 @@ export function EditProfileDialog({ open, onOpenChange, profile }: EditProfileDi
   const queryClient = useQueryClient();
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: typeof formData & { avatar_url?: string }) => {
+    mutationFn: async (data: ProfileFormData & { avatar_url?: string }) => {
       const { error } = await supabase
         .from('profiles')
         .update(data)
@@ -65,7 +62,7 @@ export function EditProfileDialog({ open, onOpenChange, profile }: EditProfileDi
     updateProfileMutation.mutate({ ...formData, avatar_url: avatarUrl });
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleFieldChange = (field: keyof ProfileFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -77,116 +74,17 @@ export function EditProfileDialog({ open, onOpenChange, profile }: EditProfileDi
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Avatar */}
-          <div className="flex flex-col items-center space-y-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={avatarUrl} />
-              <AvatarFallback>
-                {formData.full_name?.charAt(0) || profile.email?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            
-            <MediaUpload
-              accept="image"
-              maxSizeMB={3}
-              onUploadComplete={setAvatarUrl}
-              currentUrl={avatarUrl}
-              showPreview={false}
-              className="w-full max-w-xs"
-            />
-          </div>
+          <ProfileAvatarUpload
+            avatarUrl={avatarUrl}
+            fullName={formData.full_name}
+            email={profile.email}
+            onAvatarChange={setAvatarUrl}
+          />
 
-          {/* Form Fields */}
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="full_name">Nome Completo</Label>
-              <Input
-                id="full_name"
-                value={formData.full_name}
-                onChange={(e) => handleInputChange('full_name', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="presentation_name">Nome de Apresentação</Label>
-              <Input
-                id="presentation_name"
-                value={formData.presentation_name}
-                onChange={(e) => handleInputChange('presentation_name', e.target.value)}
-                placeholder="Como você quer ser chamado"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="bio">Bio</Label>
-              <Textarea
-                id="bio"
-                value={formData.bio}
-                onChange={(e) => handleInputChange('bio', e.target.value)}
-                placeholder="Conte um pouco sobre você..."
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="profession">Profissão</Label>
-              <Input
-                id="profession"
-                value={formData.profession}
-                onChange={(e) => handleInputChange('profession', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="location">Localização</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                placeholder="Cidade, Estado"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="phone">Telefone/WhatsApp</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                placeholder="(11) 99999-9999"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="website">Website</Label>
-              <Input
-                id="website"
-                value={formData.website}
-                onChange={(e) => handleInputChange('website', e.target.value)}
-                placeholder="https://seusite.com"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="instagram_handle">Instagram</Label>
-              <Input
-                id="instagram_handle"
-                value={formData.instagram_handle}
-                onChange={(e) => handleInputChange('instagram_handle', e.target.value)}
-                placeholder="seuusuario"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="twitter_handle">Twitter</Label>
-              <Input
-                id="twitter_handle"
-                value={formData.twitter_handle}
-                onChange={(e) => handleInputChange('twitter_handle', e.target.value)}
-                placeholder="seuusuario"
-              />
-            </div>
-          </div>
+          <ProfileFormFields
+            formData={formData}
+            onFieldChange={handleFieldChange}
+          />
 
           <div className="flex justify-end space-x-2 pt-4">
             <Button 
