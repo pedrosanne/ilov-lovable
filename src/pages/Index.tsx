@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { AdList } from '@/components/AdList';
@@ -14,7 +13,12 @@ import { Link } from 'react-router-dom';
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number; city: string; state: string } | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<{
+    city?: string;
+    state?: string;
+    latitude?: number;
+    longitude?: number;
+  }>({});
 
   const categories = [
     { value: 'woman_seeking_man', label: '👩 Mulher procura Homem' },
@@ -78,6 +82,11 @@ const Index = () => {
     }
   ];
 
+  // Convert location object to string for AdList component
+  const locationString = selectedLocation.city && selectedLocation.state 
+    ? `${selectedLocation.city}, ${selectedLocation.state}` 
+    : '';
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -116,8 +125,8 @@ const Index = () => {
                   
                   <div className="md:col-span-1">
                     <LocationSelector
-                      onLocationSelect={setSelectedLocation}
-                      placeholder="Localização"
+                      onLocationChange={setSelectedLocation}
+                      selectedLocation={selectedLocation}
                     />
                   </div>
                   
@@ -251,7 +260,7 @@ const Index = () => {
           <AdList 
             searchTerm={searchTerm}
             category={selectedCategory}
-            location={selectedLocation}
+            location={locationString}
             limit={8}
           />
           
