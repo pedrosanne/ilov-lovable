@@ -261,7 +261,6 @@ const Index = () => {
             searchTerm={searchTerm}
             category={selectedCategory}
             location={locationString}
-            limit={8}
           />
           
           <div className="text-center mt-12">
