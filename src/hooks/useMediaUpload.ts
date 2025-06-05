@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 interface UploadOptions {
   maxSizeInMB?: number;
   allowedTypes?: string[];
+  bucket?: string;
 }
 
 export function useMediaUpload() {
@@ -17,7 +18,11 @@ export function useMediaUpload() {
     userId: string, 
     options: UploadOptions = {}
   ): Promise<string | null> => {
-    const { maxSizeInMB = 10, allowedTypes = ['image/*', 'video/*'] } = options;
+    const { 
+      maxSizeInMB = 10, 
+      allowedTypes = ['image/*', 'video/*'],
+      bucket = 'media-uploads'
+    } = options;
     
     try {
       setUploading(true);
@@ -36,7 +41,8 @@ export function useMediaUpload() {
       // Validar tipo do arquivo
       const isValidType = allowedTypes.some(type => {
         if (type.endsWith('/*')) {
-          return file.type.startsWith(type.replace('/*', '/'));
+          const baseType = type.replace('/*', '/');
+          return file.type.startsWith(baseType);
         }
         return file.type === type;
       });
@@ -52,18 +58,26 @@ export function useMediaUpload() {
 
       // Gerar nome único para o arquivo
       const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const timestamp = Date.now();
+      const randomId = Math.random().toString(36).substring(2);
+      const fileName = `${userId}/${timestamp}-${randomId}.${fileExt}`;
       
       // Upload para o Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('media-uploads')
-        .upload(fileName, file);
+      const { data, error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
 
       // Obter URL pública
-      const { data } = supabase.storage
-        .from('media-uploads')
+      const { data: urlData } = supabase.storage
+        .from(bucket)
         .getPublicUrl(fileName);
 
       toast({
@@ -71,7 +85,7 @@ export function useMediaUpload() {
         description: "Sua mídia foi enviada com sucesso.",
       });
 
-      return data.publicUrl;
+      return urlData.publicUrl;
     } catch (error) {
       console.error('Erro no upload:', error);
       toast({
@@ -85,7 +99,7 @@ export function useMediaUpload() {
     }
   };
 
-  const deleteMedia = async (url: string): Promise<boolean> => {
+  const deleteMedia = async (url: string, bucket: string = 'media-uploads'): Promise<boolean> => {
     try {
       // Extrair o caminho do arquivo da URL
       const urlParts = url.split('/');
@@ -94,14 +108,27 @@ export function useMediaUpload() {
       const filePath = `${userFolder}/${fileName}`;
 
       const { error } = await supabase.storage
-        .from('media-uploads')
+        .from(bucket)
         .remove([filePath]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Delete error:', error);
+        throw error;
+      }
+
+      toast({
+        title: "Arquivo removido",
+        description: "O arquivo foi removido com sucesso.",
+      });
 
       return true;
     } catch (error) {
       console.error('Erro ao deletar mídia:', error);
+      toast({
+        title: "Erro ao remover arquivo",
+        description: "Não foi possível remover o arquivo.",
+        variant: "destructive",
+      });
       return false;
     }
   };
