@@ -119,7 +119,7 @@ const Profile = () => {
           <MessagesSystem />
         ) : null;
       case 'upgrade':
-        return isOwnProfile && !profile.is_provider ? <UpgradeToProvider /> : null;
+        return isOwnProfile ? <UpgradeToProvider /> : null;
       case 'settings':
         return isOwnProfile ? <ProfileSettings /> : null;
       default:
@@ -142,7 +142,7 @@ const Profile = () => {
           <StoriesRow stories={stories} />
         )}
 
-        {/* Toggle de tipo de perfil (apenas para perfil próprio) */}
+        {/* Toggle de tipo de perfil (sempre visível para perfil próprio) */}
         {isOwnProfile && (
           <ProfileTypeToggle
             profile={profile}

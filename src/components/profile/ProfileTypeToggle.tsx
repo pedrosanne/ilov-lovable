@@ -2,9 +2,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { UserCheck, Briefcase, Info, Clock } from 'lucide-react';
+import { UserCheck, Briefcase, Info, Clock, CheckCircle } from 'lucide-react';
 import { useProviderUpgradeRequest } from '@/hooks/useProviderUpgrade';
-import { useNavigate } from 'react-router-dom';
 
 interface ProfileTypeToggleProps {
   profile: any;
@@ -14,18 +13,19 @@ interface ProfileTypeToggleProps {
 
 export function ProfileTypeToggle({ profile, currentViewType, onViewTypeChange }: ProfileTypeToggleProps) {
   const { hasRequestPending } = useProviderUpgradeRequest();
-  const navigate = useNavigate();
 
   const handleRequestUpgrade = () => {
-    // Navegar para a aba de upgrade
-    onViewTypeChange('client');
-    // Simular um clique na aba upgrade ou navegar para ela
-    setTimeout(() => {
-      const upgradeTab = document.querySelector('[data-tab="upgrade"]') as HTMLElement;
-      if (upgradeTab) {
-        upgradeTab.click();
-      }
-    }, 100);
+    // Navegar para a aba de upgrade se não for anunciante
+    if (!profile.is_provider) {
+      onViewTypeChange('client');
+      // Simular um clique na aba upgrade ou navegar para ela
+      setTimeout(() => {
+        const upgradeTab = document.querySelector('[data-tab="upgrade"]') as HTMLElement;
+        if (upgradeTab) {
+          upgradeTab.click();
+        }
+      }, 100);
+    }
   };
 
   return (
@@ -61,47 +61,58 @@ export function ProfileTypeToggle({ profile, currentViewType, onViewTypeChange }
               <Briefcase className="h-4 w-4 mr-2" />
               Perfil de Anunciante
               {!profile.is_provider && <Badge variant="secondary" className="ml-2">Inativo</Badge>}
+              {profile.is_provider && <Badge variant="default" className="ml-2 bg-green-600">Ativo</Badge>}
             </Button>
           </div>
 
-          {/* Status do perfil de anunciante */}
-          {!profile.is_provider && (
-            <div className="space-y-3">
-              {hasRequestPending ? (
-                <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                  <div className="flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-orange-900">Solicitação Pendente</h4>
-                      <p className="text-sm text-orange-700 mt-1">
-                        Sua solicitação para se tornar anunciante está sendo analisada. 
-                        Você receberá uma notificação sobre o resultado.
-                      </p>
-                    </div>
+          {/* Status do perfil de anunciante - SEMPRE VISÍVEL */}
+          <div className="space-y-3">
+            {profile.is_provider ? (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-green-900">Anunciante Ativo</h4>
+                    <p className="text-sm text-green-700 mt-1">
+                      Parabéns! Você já é um anunciante verificado. Pode criar anúncios e ser encontrado por clientes na plataforma.
+                    </p>
                   </div>
                 </div>
-              ) : (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="flex items-start gap-3">
-                    <Info className="h-5 w-5 text-blue-600 mt-0.5" />
-                    <div className="flex-1">
-                      <h4 className="font-medium text-blue-900">Torne-se um Anunciante</h4>
-                      <p className="text-sm text-blue-700 mt-1">
-                        Solicite aprovação para criar anúncios e ser encontrado por clientes na plataforma.
-                      </p>
-                      <Button
-                        size="sm"
-                        className="mt-3"
-                        onClick={handleRequestUpgrade}
-                      >
-                        Solicitar Aprovação
-                      </Button>
-                    </div>
+              </div>
+            ) : hasRequestPending ? (
+              <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-orange-900">Solicitação Pendente</h4>
+                    <p className="text-sm text-orange-700 mt-1">
+                      Sua solicitação para se tornar anunciante está sendo analisada. 
+                      Você receberá uma notificação sobre o resultado.
+                    </p>
                   </div>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-blue-900">Torne-se um Anunciante</h4>
+                    <p className="text-sm text-blue-700 mt-1">
+                      Solicite aprovação para criar anúncios e ser encontrado por clientes na plataforma.
+                    </p>
+                    <Button
+                      size="sm"
+                      className="mt-3"
+                      onClick={handleRequestUpgrade}
+                    >
+                      Solicitar Aprovação
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
