@@ -1,13 +1,12 @@
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar, Globe, Instagram, Twitter, MessageCircle, Settings, ShieldCheck } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Phone, Globe, Instagram, Twitter, Edit, MessageCircle, Calendar, ShieldCheck } from 'lucide-react';
+import { EditProfileDialog } from './EditProfileDialog';
+import { CreateStoryDialog } from './CreateStoryDialog';
 
 interface ProfileHeaderProps {
   profile: any;
@@ -16,176 +15,167 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: ProfileHeaderProps) {
-  const { user } = useAuth();
-
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), 'MMMM yyyy', { locale: ptBR });
-    } catch {
-      return '';
-    }
-  };
-
-  const getInitials = (name: string | null) => {
-    if (!name) return 'U';
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showStoryDialog, setShowStoryDialog] = useState(false);
 
   return (
-    <Card className="mb-6 overflow-hidden">
-      {/* Cover Image */}
-      <div 
-        className="h-32 md:h-48 bg-gradient-to-r from-blue-500 to-purple-600"
-        style={{
-          backgroundImage: profile.cover_image_url ? `url(${profile.cover_image_url})` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      />
-      
-      <CardContent className="relative px-4 md:px-6 pb-6">
-        {/* Profile Layout */}
-        <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-end md:justify-between">
-          {/* Left Section - Avatar and Info */}
-          <div className="flex flex-col md:flex-row md:items-end md:space-x-6">
+    <>
+      <Card className="relative overflow-hidden">
+        {/* Cover Image */}
+        <div 
+          className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 relative"
+          style={{
+            backgroundImage: profile.cover_image_url ? `url(${profile.cover_image_url})` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          {isOwnProfile && (
+            <Button
+              size="sm"
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white border-0"
+              onClick={() => setShowStoryDialog(true)}
+            >
+              + Adicionar Story
+            </Button>
+          )}
+        </div>
+
+        <CardContent className="relative">
+          {/* Profile Info Container - Fixed positioning */}
+          <div className="flex flex-col lg:flex-row lg:items-end gap-4 -mt-16 relative z-10">
             {/* Avatar */}
-            <div className="relative -mt-12 md:-mt-16 mb-4 md:mb-0">
-              <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-white shadow-lg">
-                <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
-                <AvatarFallback className="text-lg md:text-xl">
-                  {getInitials(profile.full_name)}
+            <div className="flex-shrink-0">
+              <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+                <AvatarImage src={profile.avatar_url} />
+                <AvatarFallback className="text-2xl">
+                  {profile.full_name?.charAt(0) || profile.email?.charAt(0) || 'U'}
                 </AvatarFallback>
               </Avatar>
             </div>
-            
-            {/* Profile Info */}
-            <div className="flex-1 md:mb-4">
-              {/* Name and Verification */}
-              <div className="flex items-center space-x-2 mb-1">
-                <h1 className="text-xl md:text-2xl font-bold text-gray-900">
-                  {profile.presentation_name || profile.full_name}
-                </h1>
-                {profile.is_verified && (
-                  <ShieldCheck className="h-5 w-5 md:h-6 md:w-6 text-blue-500 flex-shrink-0" />
-                )}
-              </div>
-              
-              {/* Profession */}
-              {profile.profession && (
-                <p className="text-gray-600 mb-2">{profile.profession}</p>
-              )}
-              
-              {/* Location and Join Date */}
-              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-2">
-                {profile.location && (
-                  <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {profile.location}
+
+            {/* Profile Details - Better spacing and layout */}
+            <div className="flex-1 bg-white/95 backdrop-blur-sm rounded-lg p-4 lg:p-6 lg:ml-4">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                      {profile.presentation_name || profile.full_name || 'Usuário'}
+                    </h1>
+                    {profile.is_verified && (
+                      <ShieldCheck className="h-6 w-6 text-blue-500" />
+                    )}
                   </div>
-                )}
-                
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-1" />
-                  Membro desde {formatDate(profile.created_at)}
+                  
+                  {profile.profession && (
+                    <p className="text-lg text-gray-600 mb-2">{profile.profession}</p>
+                  )}
+                  
+                  {profile.bio && (
+                    <p className="text-gray-700 mb-3 leading-relaxed">{profile.bio}</p>
+                  )}
+
+                  {/* Stats */}
+                  <div className="flex gap-6 mb-4">
+                    <div className="text-center">
+                      <div className="font-bold text-lg">{profile.posts_count || 0}</div>
+                      <div className="text-sm text-gray-600">Posts</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold text-lg">{profile.followers_count || 0}</div>
+                      <div className="text-sm text-gray-600">Seguidores</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold text-lg">{profile.following_count || 0}</div>
+                      <div className="text-sm text-gray-600">Seguindo</div>
+                    </div>
+                  </div>
+
+                  {/* Contact Info */}
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                    {profile.location && (
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4" />
+                        {profile.location}
+                      </div>
+                    )}
+                    {profile.phone && (
+                      <div className="flex items-center gap-1">
+                        <Phone className="h-4 w-4" />
+                        {profile.phone}
+                      </div>
+                    )}
+                    {profile.website && (
+                      <div className="flex items-center gap-1">
+                        <Globe className="h-4 w-4" />
+                        <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
+                          {profile.website}
+                        </a>
+                      </div>
+                    )}
+                    {profile.instagram_handle && (
+                      <div className="flex items-center gap-1">
+                        <Instagram className="h-4 w-4" />
+                        <a href={`https://instagram.com/${profile.instagram_handle}`} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
+                          @{profile.instagram_handle}
+                        </a>
+                      </div>
+                    )}
+                    {profile.twitter_handle && (
+                      <div className="flex items-center gap-1">
+                        <Twitter className="h-4 w-4" />
+                        <a href={`https://twitter.com/${profile.twitter_handle}`} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
+                          @{profile.twitter_handle}
+                        </a>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Stats */}
-              <div className="flex items-center space-x-4 mb-3">
-                <span className="text-sm">
-                  <strong>{profile.posts_count || 0}</strong> posts
-                </span>
-                <span className="text-sm">
-                  <strong>{profile.followers_count || 0}</strong> seguidores
-                </span>
-                <span className="text-sm">
-                  <strong>{profile.following_count || 0}</strong> seguindo
-                </span>
-              </div>
-
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2">
-                {profile.is_provider && (
-                  <Badge variant="secondary">Anunciante</Badge>
-                )}
-                {profile.is_verified && (
-                  <Badge className="bg-blue-500">Verificado</Badge>
-                )}
+                {/* Action Buttons */}
+                <div className="flex gap-2 lg:flex-col">
+                  {isOwnProfile ? (
+                    <Button 
+                      onClick={() => setShowEditDialog(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <Edit className="h-4 w-4" />
+                      Editar Perfil
+                    </Button>
+                  ) : (
+                    onStartConversation && (
+                      <Button 
+                        onClick={onStartConversation}
+                        className="flex items-center gap-2"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                        Mensagem
+                      </Button>
+                    )
+                  )}
+                </div>
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          {/* Right Section - Action Button */}
-          <div className="flex justify-center md:justify-end md:mb-4">
-            {isOwnProfile ? (
-              <Button variant="outline" asChild className="w-full md:w-auto">
-                <Link to="/profile?tab=settings">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Editar Perfil
-                </Link>
-              </Button>
-            ) : (
-              onStartConversation && (
-                <Button onClick={onStartConversation} className="w-full md:w-auto">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Enviar Mensagem
-                </Button>
-              )
-            )}
-          </div>
-        </div>
+      {/* Edit Profile Dialog */}
+      {isOwnProfile && (
+        <EditProfileDialog
+          open={showEditDialog}
+          onOpenChange={setShowEditDialog}
+          profile={profile}
+        />
+      )}
 
-        {/* Bio */}
-        {profile.bio && (
-          <div className="mt-4 pt-4 border-t">
-            <p className="text-gray-700">{profile.bio}</p>
-          </div>
-        )}
-
-        {/* Social Links */}
-        {(profile.website || profile.instagram_handle || profile.twitter_handle) && (
-          <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t">
-            {profile.website && (
-              <a
-                href={profile.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
-              >
-                <Globe className="h-4 w-4 mr-1" />
-                Website
-              </a>
-            )}
-            {profile.instagram_handle && (
-              <a
-                href={`https://instagram.com/${profile.instagram_handle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-pink-600 hover:text-pink-800 text-sm"
-              >
-                <Instagram className="h-4 w-4 mr-1" />
-                @{profile.instagram_handle}
-              </a>
-            )}
-            {profile.twitter_handle && (
-              <a
-                href={`https://twitter.com/${profile.twitter_handle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-blue-400 hover:text-blue-600 text-sm"
-              >
-                <Twitter className="h-4 w-4 mr-1" />
-                @{profile.twitter_handle}
-              </a>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {/* Create Story Dialog */}
+      {isOwnProfile && (
+        <CreateStoryDialog
+          open={showStoryDialog}
+          onOpenChange={setShowStoryDialog}
+        />
+      )}
+    </>
   );
 }

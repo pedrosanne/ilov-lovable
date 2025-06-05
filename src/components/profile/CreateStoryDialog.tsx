@@ -4,8 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Camera, Video } from 'lucide-react';
+import { MediaUpload } from '@/components/ui/media-upload';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -22,12 +21,15 @@ export function CreateStoryDialog({ open, onOpenChange }: CreateStoryDialogProps
   const queryClient = useQueryClient();
 
   const [mediaUrl, setMediaUrl] = useState('');
-  const [mediaType, setMediaType] = useState<'photo' | 'video'>('photo');
   const [caption, setCaption] = useState('');
 
   const createStoryMutation = useMutation({
     mutationFn: async () => {
       if (!user || !mediaUrl.trim()) throw new Error('Dados inválidos');
+
+      // Detectar tipo de mídia baseado na URL
+      const isVideo = /\.(mp4|webm|ogg|mov|avi)$/i.test(mediaUrl);
+      const mediaType = isVideo ? 'video' : 'photo';
 
       const { error } = await supabase
         .from('profile_stories')
@@ -48,7 +50,6 @@ export function CreateStoryDialog({ open, onOpenChange }: CreateStoryDialogProps
       queryClient.invalidateQueries({ queryKey: ['stories'] });
       setMediaUrl('');
       setCaption('');
-      setMediaType('photo');
       onOpenChange(false);
     },
     onError: () => {
@@ -65,12 +66,20 @@ export function CreateStoryDialog({ open, onOpenChange }: CreateStoryDialogProps
     if (!mediaUrl.trim()) {
       toast({
         title: "Atenção",
-        description: "Adicione uma URL de mídia ao seu story.",
+        description: "Adicione uma mídia ao seu story.",
         variant: "destructive",
       });
       return;
     }
     createStoryMutation.mutate();
+  };
+
+  const handleMediaUpload = (url: string) => {
+    setMediaUrl(url);
+  };
+
+  const handleRemoveMedia = () => {
+    setMediaUrl('');
   };
 
   return (
@@ -82,36 +91,15 @@ export function CreateStoryDialog({ open, onOpenChange }: CreateStoryDialogProps
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label>Tipo de Mídia</Label>
-            <Select value={mediaType} onValueChange={(value: any) => setMediaType(value)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="photo">
-                  <div className="flex items-center">
-                    <Camera className="h-4 w-4 mr-2" />
-                    Foto
-                  </div>
-                </SelectItem>
-                <SelectItem value="video">
-                  <div className="flex items-center">
-                    <Video className="h-4 w-4 mr-2" />
-                    Vídeo
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="mediaUrl">URL da Mídia</Label>
-            <Input
-              id="mediaUrl"
-              value={mediaUrl}
-              onChange={(e) => setMediaUrl(e.target.value)}
-              placeholder="https://exemplo.com/imagem.jpg"
-              required
+            <Label>Mídia do Story</Label>
+            <MediaUpload
+              onUploadComplete={handleMediaUpload}
+              onRemove={handleRemoveMedia}
+              currentUrl={mediaUrl}
+              accept="both"
+              maxSizeMB={50}
+              className="w-full"
+              showPreview={true}
             />
           </div>
 
@@ -122,11 +110,15 @@ export function CreateStoryDialog({ open, onOpenChange }: CreateStoryDialogProps
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               placeholder="Adicione uma legenda..."
+              maxLength={200}
             />
+            <p className="text-xs text-gray-500 mt-1">
+              {caption.length}/200 caracteres
+            </p>
           </div>
 
-          <div className="text-sm text-gray-500">
-            💡 Seu story ficará disponível por 24 horas
+          <div className="text-sm text-gray-500 bg-blue-50 p-3 rounded">
+            💡 Seu story ficará disponível por 24 horas e será visível para todos que visitarem seu perfil.
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
@@ -139,7 +131,7 @@ export function CreateStoryDialog({ open, onOpenChange }: CreateStoryDialogProps
             </Button>
             <Button 
               type="submit"
-              disabled={createStoryMutation.isPending}
+              disabled={createStoryMutation.isPending || !mediaUrl}
             >
               {createStoryMutation.isPending ? 'Criando...' : 'Criar Story'}
             </Button>

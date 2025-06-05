@@ -56,14 +56,20 @@ export function useMediaUpload() {
       
       // Upload para o Supabase Storage
       const { error: uploadError } = await supabase.storage
-        .from('media-uploads')
-        .upload(fileName, file);
+        .from('user-media')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
 
       // Obter URL pública
       const { data } = supabase.storage
-        .from('media-uploads')
+        .from('user-media')
         .getPublicUrl(fileName);
 
       toast({
@@ -94,7 +100,7 @@ export function useMediaUpload() {
       const filePath = `${userFolder}/${fileName}`;
 
       const { error } = await supabase.storage
-        .from('media-uploads')
+        .from('user-media')
         .remove([filePath]);
 
       if (error) throw error;
