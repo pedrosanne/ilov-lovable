@@ -1,13 +1,13 @@
 
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { PostFormFields } from './post/PostFormFields';
 import { PostMediaUpload } from './post/PostMediaUpload';
+import { PostFormActions } from './post/PostFormActions';
 
 interface CreatePostDialogProps {
   open: boolean;
@@ -104,21 +104,10 @@ export function CreatePostDialog({ open, onOpenChange }: CreatePostDialogProps) 
             onRemoveMedia={removeMediaUrl}
           />
 
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => onOpenChange(false)}
-            >
-              Cancelar
-            </Button>
-            <Button 
-              type="submit"
-              disabled={createPostMutation.isPending}
-            >
-              {createPostMutation.isPending ? 'Publicando...' : 'Publicar'}
-            </Button>
-          </div>
+          <PostFormActions
+            isSubmitting={createPostMutation.isPending}
+            onCancel={() => onOpenChange(false)}
+          />
         </form>
       </DialogContent>
     </Dialog>
