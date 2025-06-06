@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { Heart, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Linkedin, Shield, Users, Star, Zap } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Linkedin, Shield, Users, Star, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -45,9 +45,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center space-x-2">
-              <Heart className="h-8 w-8 text-red-500" />
-              <span className="text-2xl font-bold">iLove</span>
+            <Link to="/" className="flex items-center">
+              <img 
+                src="https://zrtlzkqqwiupqbbiwxbo.supabase.co/storage/v1/object/public/logos//LOGO-iLov-PNG-Branco.webp" 
+                alt="iLove" 
+                className="h-12 w-auto"
+              />
             </Link>
             <p className="text-gray-300 text-sm leading-relaxed">
               A plataforma mais segura e confiável para encontros e relacionamentos no Brasil. 
