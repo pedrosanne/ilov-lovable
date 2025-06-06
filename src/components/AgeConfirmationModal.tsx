@@ -11,7 +11,7 @@ interface AgeConfirmationModalProps {
 export function AgeConfirmationModal({ open, onConfirm }: AgeConfirmationModalProps) {
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md" hideCloseButton>
+      <DialogContent className="sm:max-w-md [&>button]:hidden">
         <DialogHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Shield className="h-16 w-16 text-blue-600" />
