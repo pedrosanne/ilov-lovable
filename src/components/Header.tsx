@@ -1,7 +1,7 @@
 
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { User, PlusCircle, LogOut, UserCircle, Shield } from 'lucide-react';
+import { Heart, User, PlusCircle, LogOut, UserCircle, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import {
   DropdownMenu,
@@ -25,26 +25,22 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-border">
+    <header className="bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
-            <img 
-              src="/lovable-uploads/9a89b9d7-7d01-4b1e-ba4c-4ebc14bbbc11.png" 
-              alt="iLov" 
-              className="h-8 w-auto"
-            />
-            <span className="text-2xl font-bold text-foreground font-intra">iLov</span>
+            <Heart className="h-8 w-8 text-red-500" />
+            <span className="text-2xl font-bold text-gray-900">iLove</span>
           </Link>
           
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-muted-foreground hover:text-foreground font-intra">
+            <Link to="/" className="text-gray-600 hover:text-gray-900">
               Início
             </Link>
-            <Link to="/categories" className="text-muted-foreground hover:text-foreground font-intra">
+            <Link to="/categories" className="text-gray-600 hover:text-gray-900">
               Categorias
             </Link>
-            <Link to="/about" className="text-muted-foreground hover:text-foreground font-intra">
+            <Link to="/about" className="text-gray-600 hover:text-gray-900">
               Sobre
             </Link>
           </nav>
