@@ -85,6 +85,24 @@ const CreateAdV2 = () => {
 
   const progress = gamification.getProgress();
 
+  // Prepare props based on current step
+  const getStepProps = () => {
+    const baseProps = {
+      formData,
+      updateFormData
+    };
+
+    // Only Step6Final needs completionPercentage
+    if (currentStep === 6) {
+      return {
+        ...baseProps,
+        completionPercentage
+      };
+    }
+
+    return baseProps;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <Header />
@@ -156,11 +174,7 @@ const CreateAdV2 = () => {
             <div className="lg:col-span-3">
               <Card className="border-2 border-purple-100 shadow-lg">
                 <CardContent className="p-8">
-                  <CurrentStepComponent 
-                    formData={formData}
-                    updateFormData={updateFormData}
-                    completionPercentage={completionPercentage}
-                  />
+                  <CurrentStepComponent {...getStepProps()} />
                 </CardContent>
               </Card>
 

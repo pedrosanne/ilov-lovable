@@ -148,8 +148,8 @@ export function useCreateAdFormV2() {
     let completed = 0;
     requiredFields.forEach(field => {
       const value = formData[field as keyof AdFormDataV2];
-      if (value && value !== '' && value !== 0 && value !== false && 
-          (!Array.isArray(value) || value.length > 0)) {
+      if (value !== null && value !== undefined && value !== '' && value !== 0 && 
+          (!Array.isArray(value) || value.length > 0) && value !== false) {
         completed++;
       }
     });
