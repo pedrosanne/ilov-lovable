@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Camera, Video, Upload, Eye, EyeOff } from 'lucide-react';
+import { useRef } from 'react';
 
 interface MediaStepProps {
   formData: any;
@@ -11,14 +12,16 @@ interface MediaStepProps {
 }
 
 export function MediaStep({ formData, updateFormData }: MediaStepProps) {
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      // Aqui implementaríamos o upload real das imagens
       console.log('Files to upload:', files);
-      // Por ora, vamos simular URLs
       const newPhotos = Array.from(files).map((file, index) => ({
         id: Date.now() + index,
+        file: file,
         url: URL.createObjectURL(file),
         name: file.name,
         isPrivate: false
@@ -39,6 +42,7 @@ export function MediaStep({ formData, updateFormData }: MediaStepProps) {
       console.log('Videos to upload:', files);
       const newVideos = Array.from(files).map((file, index) => ({
         id: Date.now() + index,
+        file: file,
         url: URL.createObjectURL(file),
         name: file.name,
         isPrivate: false
@@ -114,20 +118,21 @@ export function MediaStep({ formData, updateFormData }: MediaStepProps) {
           <span>Upload de fotos adicionais</span>
         </Label>
         
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <Input
+        <div 
+          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+          onClick={() => photoInputRef.current?.click()}
+        >
+          <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">Clique para selecionar fotos</p>
+          <p className="text-sm text-gray-500">Máximo 10 fotos, até 5MB cada</p>
+          <input
+            ref={photoInputRef}
             type="file"
             accept="image/*"
             multiple
             onChange={handlePhotoUpload}
             className="hidden"
-            id="photo-upload"
           />
-          <Label htmlFor="photo-upload" className="cursor-pointer">
-            <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Clique para selecionar fotos</p>
-            <p className="text-sm text-gray-500">Máximo 10 fotos, até 5MB cada</p>
-          </Label>
         </div>
 
         {formData.photos?.uploaded && formData.photos.uploaded.length > 0 && (
@@ -166,20 +171,21 @@ export function MediaStep({ formData, updateFormData }: MediaStepProps) {
           <span>Upload de vídeos</span>
         </Label>
         
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <Input
+        <div 
+          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+          onClick={() => videoInputRef.current?.click()}
+        >
+          <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">Clique para selecionar vídeos</p>
+          <p className="text-sm text-gray-500">Máximo 3 vídeos, até 50MB cada</p>
+          <input
+            ref={videoInputRef}
             type="file"
             accept="video/*"
             multiple
             onChange={handleVideoUpload}
             className="hidden"
-            id="video-upload"
           />
-          <Label htmlFor="video-upload" className="cursor-pointer">
-            <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Clique para selecionar vídeos</p>
-            <p className="text-sm text-gray-500">Máximo 3 vídeos, até 50MB cada</p>
-          </Label>
         </div>
       </div>
 
