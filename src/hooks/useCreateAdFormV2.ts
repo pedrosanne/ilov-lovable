@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { useGamification } from './useGamification';
 import { AdFormDataV2, initialFormData } from '@/types/adFormV2';
 import { isStepValid } from '@/utils/adFormValidation';
-import { checkAchievements } from '@/utils/adFormAchievements';
 import { calculateCompletionPercentage } from '@/utils/adFormCompletion';
 
 export function useCreateAdFormV2() {
@@ -33,9 +32,6 @@ export function useCreateAdFormV2() {
         }
       });
       
-      // Check for achievements
-      checkAchievements(newData, gamification.unlockAchievement);
-      
       return newData;
     });
   }, [gamification]);
@@ -44,19 +40,14 @@ export function useCreateAdFormV2() {
   useEffect(() => {
     const percentage = calculateCompletionPercentage(formData);
     setCompletionPercentage(percentage);
-    
-    // Complete profile achievement
-    if (percentage === 100) {
-      gamification.unlockAchievement('complete_profile');
-    }
-  }, [formData, gamification]);
+  }, [formData]);
 
   const validateStep = useCallback((step: number): boolean => {
     return isStepValid(step, formData);
   }, [formData]);
 
   const submitAd = async () => {
-    if (!user || !validateStep(6)) return;
+    if (!user || !validateStep(7)) return;
 
     // Award final XP
     gamification.addXP(200, 'Anúncio publicado com sucesso!');

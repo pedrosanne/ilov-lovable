@@ -8,6 +8,7 @@ export interface Achievement {
   icon: string;
   unlocked: boolean;
   xpReward: number;
+  stepNumber: number;
 }
 
 export interface GamificationState {
@@ -19,52 +20,67 @@ export interface GamificationState {
 
 const ACHIEVEMENTS: Achievement[] = [
   {
-    id: 'first_impression',
-    title: 'Primeira Impressão',
-    description: 'Adicionou sua primeira foto',
-    icon: '🌟',
+    id: 'step_1',
+    title: 'Etapa 1 - Quem é você?',
+    description: 'Complete suas informações pessoais',
+    icon: '🎭',
     unlocked: false,
-    xpReward: 30
+    xpReward: 50,
+    stepNumber: 1
   },
   {
-    id: 'storyteller',
-    title: 'Contador de Histórias',
-    description: 'Escreveu uma descrição completa',
-    icon: '📝',
+    id: 'step_2',
+    title: 'Etapa 2 - Seus serviços',
+    description: 'Defina os serviços que oferece',
+    icon: '💼',
     unlocked: false,
-    xpReward: 25
+    xpReward: 50,
+    stepNumber: 2
   },
   {
-    id: 'premium_member',
-    title: 'Membro Premium',
-    description: 'Escolheu um pacote de destaque',
-    icon: '💎',
+    id: 'step_3',
+    title: 'Etapa 3 - Seus valores',
+    description: 'Configure seus preços',
+    icon: '💰',
     unlocked: false,
-    xpReward: 40
+    xpReward: 50,
+    stepNumber: 3
   },
   {
-    id: 'complete_profile',
-    title: 'Perfil Completo',
-    description: 'Preencheu 100% do anúncio',
-    icon: '🔥',
-    unlocked: false,
-    xpReward: 50
-  },
-  {
-    id: 'media_master',
-    title: 'Mestre da Mídia',
-    description: 'Adicionou 5 ou mais fotos',
+    id: 'step_4',
+    title: 'Etapa 4 - Sua vitrine',
+    description: 'Adicione fotos e vídeos',
     icon: '📸',
     unlocked: false,
-    xpReward: 35
+    xpReward: 50,
+    stepNumber: 4
   },
   {
-    id: 'social_butterfly',
-    title: 'Borboleta Social',
-    description: 'Adicionou 3 ou mais formas de contato',
-    icon: '🦋',
+    id: 'step_5',
+    title: 'Etapa 5 - Como te encontrar',
+    description: 'Configure suas formas de contato',
+    icon: '📞',
     unlocked: false,
-    xpReward: 20
+    xpReward: 50,
+    stepNumber: 5
+  },
+  {
+    id: 'step_6',
+    title: 'Etapa 6 - Sua voz',
+    description: 'Grave um áudio de apresentação',
+    icon: '🎤',
+    unlocked: false,
+    xpReward: 50,
+    stepNumber: 6
+  },
+  {
+    id: 'step_7',
+    title: 'Etapa 7 - Finalizando',
+    description: 'Confirme os termos e publique',
+    icon: '✨',
+    unlocked: false,
+    xpReward: 100,
+    stepNumber: 7
   }
 ];
 

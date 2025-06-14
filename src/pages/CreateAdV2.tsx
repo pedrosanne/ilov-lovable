@@ -16,7 +16,8 @@ import { Step2Services } from '@/components/create-ad-v2/Step2Services';
 import { Step3Pricing } from '@/components/create-ad-v2/Step3Pricing';
 import { Step4Media } from '@/components/create-ad-v2/Step4Media';
 import { Step5Contact } from '@/components/create-ad-v2/Step5Contact';
-import { Step6Final } from '@/components/create-ad-v2/Step6Final';
+import { Step6Voice } from '@/components/create-ad-v2/Step6Voice';
+import { Step7Final } from '@/components/create-ad-v2/Step7Final';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const CreateAdV2 = () => {
@@ -57,7 +58,8 @@ const CreateAdV2 = () => {
     { id: 3, title: '💰 Seus valores', component: Step3Pricing },
     { id: 4, title: '📸 Sua vitrine', component: Step4Media },
     { id: 5, title: '📞 Como te encontrar', component: Step5Contact },
-    { id: 6, title: '✨ Finalizando', component: Step6Final },
+    { id: 6, title: '🎤 Sua voz', component: Step6Voice },
+    { id: 7, title: '✨ Finalizando', component: Step7Final },
   ];
 
   const currentStepData = steps[currentStep - 1];
@@ -65,7 +67,7 @@ const CreateAdV2 = () => {
 
   const handleNext = () => {
     if (currentStep < steps.length && isStepValid(currentStep)) {
-      gamification.addXP(50, `Etapa ${currentStep} concluída`);
+      gamification.unlockAchievement(`step_${currentStep}`);
       setCurrentStep(currentStep + 1);
     }
   };
@@ -78,6 +80,7 @@ const CreateAdV2 = () => {
 
   const handleSubmit = async () => {
     try {
+      gamification.unlockAchievement(`step_7`);
       await submitAd();
     } catch (error) {
       console.error('Erro ao criar anúncio:', error);
@@ -92,7 +95,7 @@ const CreateAdV2 = () => {
       updateFormData
     };
 
-    if (currentStep === 6) {
+    if (currentStep === 7) {
       return {
         ...baseProps,
         completionPercentage
@@ -153,6 +156,7 @@ const CreateAdV2 = () => {
                 <AchievementsList 
                   achievements={gamification.achievements}
                   unlockedCount={gamification.unlockedCount}
+                  currentStep={currentStep}
                 />
               </div>
             )}
