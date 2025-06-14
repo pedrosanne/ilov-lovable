@@ -17,10 +17,12 @@ import { Step3Pricing } from '@/components/create-ad-v2/Step3Pricing';
 import { Step4Media } from '@/components/create-ad-v2/Step4Media';
 import { Step5Contact } from '@/components/create-ad-v2/Step5Contact';
 import { Step6Final } from '@/components/create-ad-v2/Step6Final';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const CreateAdV2 = () => {
   const { user, loading } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
+  const isMobile = useIsMobile();
   const { 
     formData, 
     updateFormData, 
@@ -109,7 +111,7 @@ const CreateAdV2 = () => {
         onClear={gamification.clearNewAchievements}
       />
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className={`container mx-auto px-4 py-8 ${isMobile ? 'pb-24' : 'max-w-4xl'}`}>
         <VerificationRequired 
           feature="a criação de anúncios"
           description="Para publicar anúncios em nossa plataforma, é necessário verificar sua identidade. Isso garante a segurança e confiabilidade do marketplace."
@@ -125,32 +127,48 @@ const CreateAdV2 = () => {
             currentStep={currentStep}
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3">
+          <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-4'}`}>
+            <div className={isMobile ? 'col-span-1' : 'lg:col-span-3'}>
               <Card className="border-2 border-purple-100 shadow-lg">
-                <CardContent className="p-8">
+                <CardContent className={`${isMobile ? 'p-4' : 'p-8'}`}>
                   <CurrentStepComponent {...getStepProps()} />
                 </CardContent>
               </Card>
 
-              <NavigationButtons
-                currentStep={currentStep}
-                totalSteps={steps.length}
-                isStepValid={isStepValid(currentStep)}
-                isSubmitting={isSubmitting}
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-                onSubmit={handleSubmit}
-              />
+              {!isMobile && (
+                <NavigationButtons
+                  currentStep={currentStep}
+                  totalSteps={steps.length}
+                  isStepValid={isStepValid(currentStep)}
+                  isSubmitting={isSubmitting}
+                  onPrevious={handlePrevious}
+                  onNext={handleNext}
+                  onSubmit={handleSubmit}
+                />
+              )}
             </div>
 
-            <div className="lg:col-span-1">
-              <AchievementsList 
-                achievements={gamification.achievements}
-                unlockedCount={gamification.unlockedCount}
-              />
-            </div>
+            {!isMobile && (
+              <div className="lg:col-span-1">
+                <AchievementsList 
+                  achievements={gamification.achievements}
+                  unlockedCount={gamification.unlockedCount}
+                />
+              </div>
+            )}
           </div>
+
+          {isMobile && (
+            <NavigationButtons
+              currentStep={currentStep}
+              totalSteps={steps.length}
+              isStepValid={isStepValid(currentStep)}
+              isSubmitting={isSubmitting}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              onSubmit={handleSubmit}
+            />
+          )}
         </VerificationRequired>
       </div>
     </div>
