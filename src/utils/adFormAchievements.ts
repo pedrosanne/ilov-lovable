@@ -22,10 +22,8 @@ export const checkAchievements = (data: AdFormDataV2, unlockAchievement: (id: st
     unlockAchievement('media_master');
   }
   
-  // Social butterfly achievement
-  const contactMethods = [data.whatsapp, data.contact_telegram, data.contact_instagram, data.contact_email]
-    .filter(contact => contact && contact.trim() !== '').length;
-  if (contactMethods >= 3) {
+  // Contact ready achievement - since WhatsApp is the only contact method and it's required
+  if (data.whatsapp && data.whatsapp.trim() !== '') {
     unlockAchievement('social_butterfly');
   }
 };
