@@ -17,8 +17,8 @@ export type AdFormDataV2 = {
   neighborhood: string;
   
   // Step 3: Seus valores
-  price: number;
-  hourly_rate: number | null;
+  hourly_rate: number; // Agora é o campo principal obrigatório
+  price: number | null; // Agora é valor da pernoite (opcional)
   highlight_package: string;
   
   // Step 4: Sua vitrine
@@ -28,10 +28,7 @@ export type AdFormDataV2 = {
   video_url: string | null;
   
   // Step 5: Como te encontrar
-  whatsapp: string;
-  contact_telegram: string;
-  contact_instagram: string;
-  contact_email: string;
+  whatsapp: string; // Único campo obrigatório de contato
   
   // Step 6: Finalizando
   terms_accepted: boolean;
@@ -53,17 +50,14 @@ export const initialFormData: AdFormDataV2 = {
   availability_days: [],
   location: '',
   neighborhood: '',
-  price: 0,
-  hourly_rate: null,
+  hourly_rate: 0,
+  price: null,
   highlight_package: 'basic',
   photos: [],
   videos: [],
   image_url: null,
   video_url: null,
   whatsapp: '',
-  contact_telegram: '',
-  contact_instagram: '',
-  contact_email: '',
   terms_accepted: false,
   age_confirmed: false,
   image_consent: false,

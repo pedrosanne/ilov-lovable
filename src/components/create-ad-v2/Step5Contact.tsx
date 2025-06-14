@@ -2,7 +2,7 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { MessageCircle, Instagram, Mail, Send, Phone } from 'lucide-react';
+import { MessageCircle, ExternalLink } from 'lucide-react';
 
 interface Step5ContactProps {
   formData: any;
@@ -26,6 +26,13 @@ export function Step5Contact({ formData, updateFormData }: Step5ContactProps) {
     updateFormData({ whatsapp: formatted });
   };
 
+  const getWhatsAppLink = () => {
+    if (!formData.whatsapp) return '';
+    const numbersOnly = formData.whatsapp.replace(/\D/g, '');
+    const fullNumber = numbersOnly.startsWith('55') ? numbersOnly : `55${numbersOnly}`;
+    return `whatsapp://send?phone=${fullNumber}&text=Ol%C3%A1%2C%20te%20encontrei%20no%20iLove%21`;
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
@@ -35,70 +42,42 @@ export function Step5Contact({ formData, updateFormData }: Step5ContactProps) {
           </div>
         </div>
         <h2 className="text-2xl font-bold text-gray-900">📞 Como te encontrar</h2>
-        <p className="text-gray-600">Seus contatos e preferências de atendimento</p>
+        <p className="text-gray-600">Seu contato direto via WhatsApp</p>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="whatsapp" className="flex items-center space-x-2">
-          <MessageCircle className="h-4 w-4 text-green-500" />
-          <span>WhatsApp * (principal meio de contato)</span>
-        </Label>
-        <Input
-          id="whatsapp"
-          value={formData.whatsapp || ''}
-          onChange={handleWhatsAppChange}
-          placeholder="(11) 99999-9999"
-          maxLength={15}
-          className="border-green-200 focus:border-green-500"
-        />
-        <p className="text-sm text-gray-500">
-          Este será o número principal para clientes entrarem em contato
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="contact_instagram" className="flex items-center space-x-2">
-            <Instagram className="h-4 w-4 text-pink-500" />
-            <span>Instagram</span>
+          <Label htmlFor="whatsapp" className="flex items-center space-x-2">
+            <MessageCircle className="h-4 w-4 text-green-500" />
+            <span>WhatsApp *</span>
           </Label>
           <Input
-            id="contact_instagram"
-            value={formData.contact_instagram || ''}
-            onChange={(e) => updateFormData({ contact_instagram: e.target.value })}
-            placeholder="@seuusuario"
+            id="whatsapp"
+            value={formData.whatsapp || ''}
+            onChange={handleWhatsAppChange}
+            placeholder="(11) 99999-9999"
+            maxLength={15}
             className="border-green-200 focus:border-green-500"
           />
+          <p className="text-sm text-gray-500">
+            Este será o número para clientes entrarem em contato
+          </p>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="contact_telegram" className="flex items-center space-x-2">
-            <Send className="h-4 w-4 text-blue-500" />
-            <span>Telegram</span>
-          </Label>
-          <Input
-            id="contact_telegram"
-            value={formData.contact_telegram || ''}
-            onChange={(e) => updateFormData({ contact_telegram: e.target.value })}
-            placeholder="@seuusuario"
-            className="border-green-200 focus:border-green-500"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="contact_email" className="flex items-center space-x-2">
-          <Mail className="h-4 w-4 text-gray-500" />
-          <span>E-mail</span>
-        </Label>
-        <Input
-          id="contact_email"
-          type="email"
-          value={formData.contact_email || ''}
-          onChange={(e) => updateFormData({ contact_email: e.target.value })}
-          placeholder="seu@email.com"
-          className="border-green-200 focus:border-green-500"
-        />
+        {formData.whatsapp && (
+          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+            <Label className="flex items-center space-x-2 mb-2">
+              <ExternalLink className="h-4 w-4 text-green-600" />
+              <span className="font-medium text-green-900">Preview do link:</span>
+            </Label>
+            <div className="bg-white p-3 rounded border text-sm text-gray-700 break-all">
+              {getWhatsAppLink()}
+            </div>
+            <p className="text-xs text-green-700 mt-2">
+              Este link será usado pelos clientes para te contactar diretamente
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -120,10 +99,10 @@ export function Step5Contact({ formData, updateFormData }: Step5ContactProps) {
       <div className="bg-green-50 p-4 rounded-lg border border-green-200">
         <h3 className="font-medium text-green-900 mb-2">💬 Dicas de contato:</h3>
         <ul className="text-sm text-green-800 space-y-1">
-          <li>• WhatsApp é essencial - é o meio preferido pelos clientes</li>
-          <li>• Mais formas de contato = mais oportunidades</li>
+          <li>• WhatsApp é o único meio de contato - mantenha-o sempre atualizado</li>
           <li>• Responda rapidamente para não perder clientes</li>
           <li>• Seja clara sobre suas regras desde o primeiro contato</li>
+          <li>• O link direto facilita o contato dos interessados</li>
         </ul>
       </div>
     </div>

@@ -8,11 +8,11 @@ export const isStepValid = (step: number, formData: AdFormDataV2): boolean => {
     case 2:
       return !!(formData.services_offered.length > 0 && formData.location);
     case 3:
-      return formData.price > 0;
+      return formData.hourly_rate > 0; // Agora valida hourly_rate como obrigatório
     case 4:
       return true; // Optional step
     case 5:
-      return !!formData.whatsapp;
+      return !!formData.whatsapp; // Apenas WhatsApp é obrigatório
     case 6:
       return formData.terms_accepted && formData.age_confirmed && formData.image_consent;
     default:

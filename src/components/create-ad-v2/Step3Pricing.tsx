@@ -2,7 +2,7 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, Crown, Star, Zap } from 'lucide-react';
+import { DollarSign, Crown, Star, Zap, Clock, Moon } from 'lucide-react';
 
 interface Step3PricingProps {
   formData: any;
@@ -54,26 +54,10 @@ export function Step3Pricing({ formData, updateFormData }: Step3PricingProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="price" className="flex items-center space-x-2">
-            <DollarSign className="h-4 w-4 text-green-500" />
-            <span>Valor base do programa *</span>
+          <Label htmlFor="hourly_rate" className="flex items-center space-x-2">
+            <Clock className="h-4 w-4 text-blue-500" />
+            <span>Valor por hora * (principal)</span>
           </Label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
-            <Input
-              id="price"
-              type="number"
-              min="0"
-              value={formData.price || ''}
-              onChange={(e) => updateFormData({ price: parseFloat(e.target.value) || 0 })}
-              placeholder="300"
-              className="pl-10 border-green-200 focus:border-green-500"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="hourly_rate">Valor por hora (opcional)</Label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
             <Input
@@ -81,11 +65,36 @@ export function Step3Pricing({ formData, updateFormData }: Step3PricingProps) {
               type="number"
               min="0"
               value={formData.hourly_rate || ''}
-              onChange={(e) => updateFormData({ hourly_rate: parseFloat(e.target.value) || null })}
+              onChange={(e) => updateFormData({ hourly_rate: parseFloat(e.target.value) || 0 })}
               placeholder="150"
               className="pl-10 border-green-200 focus:border-green-500"
             />
           </div>
+          <p className="text-sm text-gray-500">
+            Valor cobrado por hora de atendimento
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="overnight_rate" className="flex items-center space-x-2">
+            <Moon className="h-4 w-4 text-purple-500" />
+            <span>Valor da pernoite (opcional)</span>
+          </Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+            <Input
+              id="overnight_rate"
+              type="number"
+              min="0"
+              value={formData.price || ''}
+              onChange={(e) => updateFormData({ price: parseFloat(e.target.value) || 0 })}
+              placeholder="800"
+              className="pl-10 border-green-200 focus:border-green-500"
+            />
+          </div>
+          <p className="text-sm text-gray-500">
+            Valor para pernoite completo (opcional)
+          </p>
         </div>
       </div>
 
@@ -136,9 +145,9 @@ export function Step3Pricing({ formData, updateFormData }: Step3PricingProps) {
         <h3 className="font-medium text-green-900 mb-2">💡 Dicas de precificação:</h3>
         <ul className="text-sm text-green-800 space-y-1">
           <li>• Pesquise os preços da concorrência na sua região</li>
-          <li>• Comece com preços competitivos e ajuste conforme a demanda</li>
+          <li>• Valor por hora é obrigatório - seja competitiva</li>
+          <li>• Pernoite é opcional mas pode atrair mais clientes</li>
           <li>• Pacotes de destaque aumentam significativamente a visibilidade</li>
-          <li>• Seja clara sobre o que está incluído no valor</li>
         </ul>
       </div>
     </div>
