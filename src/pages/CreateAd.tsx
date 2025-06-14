@@ -111,7 +111,7 @@ const CreateAd = () => {
         onClear={gamification.clearNewAchievements}
       />
       
-      <div className={`container mx-auto px-4 py-8 ${isMobile ? 'pb-24' : 'max-w-4xl'}`}>
+      <div className={`container mx-auto px-4 py-8 ${isMobile ? 'pb-24' : 'max-w-6xl'}`}>
         <VerificationRequired 
           feature="a criação de anúncios"
           description="Para publicar anúncios em nossa plataforma, é necessário verificar sua identidade. Isso garante a segurança e confiabilidade do marketplace."
@@ -127,7 +127,7 @@ const CreateAd = () => {
             currentStep={currentStep}
           />
 
-          <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-4'}`}>
+          <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-4'}`}>
             <div className={isMobile ? 'col-span-1' : 'lg:col-span-3'}>
               <Card className="border-2 border-purple-100 shadow-lg">
                 <CardContent className={`${isMobile ? 'p-4' : 'p-8'}`}>
@@ -150,10 +150,12 @@ const CreateAd = () => {
 
             {!isMobile && (
               <div className="lg:col-span-1">
-                <AchievementsList 
-                  achievements={gamification.achievements}
-                  unlockedCount={gamification.unlockedCount}
-                />
+                <div className="sticky top-4">
+                  <AchievementsList 
+                    achievements={gamification.achievements}
+                    unlockedCount={gamification.unlockedCount}
+                  />
+                </div>
               </div>
             )}
           </div>
