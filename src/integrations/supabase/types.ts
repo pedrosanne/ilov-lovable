@@ -133,7 +133,7 @@ export type Database = {
           postal_code: string | null
           preferred_gifts: string | null
           presentation_name: string | null
-          price: number
+          price: number | null
           restrictions: string | null
           service_locations: string[] | null
           services_offered: string[] | null
@@ -188,7 +188,7 @@ export type Database = {
           postal_code?: string | null
           preferred_gifts?: string | null
           presentation_name?: string | null
-          price: number
+          price?: number | null
           restrictions?: string | null
           service_locations?: string[] | null
           services_offered?: string[] | null
@@ -243,7 +243,7 @@ export type Database = {
           postal_code?: string | null
           preferred_gifts?: string | null
           presentation_name?: string | null
-          price?: number
+          price?: number | null
           restrictions?: string | null
           service_locations?: string[] | null
           services_offered?: string[] | null

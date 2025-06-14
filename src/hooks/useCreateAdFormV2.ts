@@ -64,6 +64,8 @@ export function useCreateAdFormV2() {
     const adData = {
       user_id: user.id,
       ...formData,
+      // Garantir que price seja null se não foi preenchido
+      price: formData.price && formData.price > 0 ? formData.price : null,
       status: 'pending_approval' as const,
     };
 

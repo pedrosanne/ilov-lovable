@@ -87,7 +87,7 @@ export function Step3Pricing({ formData, updateFormData }: Step3PricingProps) {
               type="number"
               min="0"
               value={formData.price || ''}
-              onChange={(e) => updateFormData({ price: parseFloat(e.target.value) || 0 })}
+              onChange={(e) => updateFormData({ price: e.target.value ? parseFloat(e.target.value) : null })}
               placeholder="800"
               className="pl-10 border-green-200 focus:border-green-500"
             />

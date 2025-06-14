@@ -18,7 +18,7 @@ export type AdFormDataV2 = {
   
   // Step 3: Seus valores
   hourly_rate: number; // Agora é o campo principal obrigatório
-  price: number | null; // Agora é valor da pernoite (opcional)
+  price: number | null; // Valor da pernoite (opcional)
   highlight_package: string;
   
   // Step 4: Sua vitrine
@@ -51,7 +51,7 @@ export const initialFormData: AdFormDataV2 = {
   location: '',
   neighborhood: '',
   hourly_rate: 0,
-  price: null,
+  price: null, // Inicializar como null para ser opcional
   highlight_package: 'basic',
   photos: [],
   videos: [],
