@@ -2,8 +2,8 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Camera, Video, Upload, Eye, EyeOff } from 'lucide-react';
+import { MediaUpload } from '@/components/ui/media-upload';
+import { Camera, Video, Trash2 } from 'lucide-react';
 
 interface MediaStepProps {
   formData: any;
@@ -11,53 +11,29 @@ interface MediaStepProps {
 }
 
 export function MediaStep({ formData, updateFormData }: MediaStepProps) {
-  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      // Aqui implementaríamos o upload real das imagens
-      console.log('Files to upload:', files);
-      // Por ora, vamos simular URLs
-      const newPhotos = Array.from(files).map((file, index) => ({
-        id: Date.now() + index,
-        url: URL.createObjectURL(file),
-        name: file.name,
-        isPrivate: false
-      }));
-      
-      updateFormData({
-        photos: {
-          ...formData.photos,
-          uploaded: [...(formData.photos?.uploaded || []), ...newPhotos]
-        }
-      });
-    }
+  const handlePhotoUpload = (url: string) => {
+    const currentPhotos = formData.photos?.uploaded || [];
+    updateFormData({
+      photos: {
+        ...formData.photos,
+        uploaded: [...currentPhotos, url]
+      }
+    });
   };
 
-  const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      console.log('Videos to upload:', files);
-      const newVideos = Array.from(files).map((file, index) => ({
-        id: Date.now() + index,
-        url: URL.createObjectURL(file),
-        name: file.name,
-        isPrivate: false
-      }));
-      
-      updateFormData({
-        videos: {
-          ...formData.videos,
-          uploaded: [...(formData.videos?.uploaded || []), ...newVideos]
-        }
-      });
-    }
+  const handleVideoUpload = (url: string) => {
+    const currentVideos = formData.videos?.uploaded || [];
+    updateFormData({
+      videos: {
+        ...formData.videos,
+        uploaded: [...currentVideos, url]
+      }
+    });
   };
 
-  const togglePhotoPrivacy = (photoId: number) => {
-    const updatedPhotos = formData.photos?.uploaded?.map((photo: any) =>
-      photo.id === photoId ? { ...photo, isPrivate: !photo.isPrivate } : photo
-    ) || [];
-    
+  const removePhoto = (index: number) => {
+    const currentPhotos = formData.photos?.uploaded || [];
+    const updatedPhotos = currentPhotos.filter((_: string, i: number) => i !== index);
     updateFormData({
       photos: {
         ...formData.photos,
@@ -66,12 +42,13 @@ export function MediaStep({ formData, updateFormData }: MediaStepProps) {
     });
   };
 
-  const removePhoto = (photoId: number) => {
-    const updatedPhotos = formData.photos?.uploaded?.filter((photo: any) => photo.id !== photoId) || [];
+  const removeVideo = (index: number) => {
+    const currentVideos = formData.videos?.uploaded || [];
+    const updatedVideos = currentVideos.filter((_: string, i: number) => i !== index);
     updateFormData({
-      photos: {
-        ...formData.photos,
-        uploaded: updatedPhotos
+      videos: {
+        ...formData.videos,
+        uploaded: updatedVideos
       }
     });
   };
@@ -85,7 +62,7 @@ export function MediaStep({ formData, updateFormData }: MediaStepProps) {
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="image_url">URL da foto principal</Label>
+          <Label htmlFor="image_url">URL da foto principal (alternativa)</Label>
           <Input
             id="image_url"
             value={formData.image_url || ''}
@@ -93,12 +70,12 @@ export function MediaStep({ formData, updateFormData }: MediaStepProps) {
             placeholder="https://exemplo.com/minha-foto.jpg"
           />
           <p className="text-sm text-gray-500">
-            Esta será a foto principal do seu anúncio
+            Você pode inserir uma URL ou fazer upload abaixo
           </p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="video_url">URL do vídeo principal</Label>
+          <Label htmlFor="video_url">URL do vídeo principal (alternativa)</Label>
           <Input
             id="video_url"
             value={formData.video_url || ''}
@@ -110,50 +87,36 @@ export function MediaStep({ formData, updateFormData }: MediaStepProps) {
 
       <div className="space-y-4">
         <Label className="flex items-center space-x-2">
-          <Upload className="h-4 w-4 text-blue-500" />
-          <span>Upload de fotos adicionais</span>
+          <Camera className="h-4 w-4 text-blue-500" />
+          <span>Upload de fotos do dispositivo</span>
         </Label>
         
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <Input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handlePhotoUpload}
-            className="hidden"
-            id="photo-upload"
-          />
-          <Label htmlFor="photo-upload" className="cursor-pointer">
-            <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Clique para selecionar fotos</p>
-            <p className="text-sm text-gray-500">Máximo 10 fotos, até 5MB cada</p>
-          </Label>
-        </div>
+        <MediaUpload
+          accept="image"
+          maxSizeMB={5}
+          onUploadComplete={handlePhotoUpload}
+          showPreview={false}
+        />
 
         {formData.photos?.uploaded && formData.photos.uploaded.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {formData.photos.uploaded.map((photo: any) => (
-              <div key={photo.id} className="relative border rounded-lg overflow-hidden">
-                <img src={photo.url} alt={photo.name} className="w-full h-32 object-cover" />
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => togglePhotoPrivacy(photo.id)}
-                  >
-                    {photo.isPrivate ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
+            {formData.photos.uploaded.map((photo: string, index: number) => (
+              <div key={index} className="relative border rounded-lg overflow-hidden">
+                <img src={photo} alt={`Foto ${index + 1}`} className="w-full h-32 object-cover" />
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => removePhoto(photo.id)}
+                    onClick={() => removePhoto(index)}
                   >
-                    ×
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white text-xs p-1">
-                  {photo.isPrivate ? '🔒 Privada' : '👁️ Pública'}
-                </div>
+                {index === 0 && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-blue-600 text-white text-xs p-1 text-center">
+                    Foto Principal
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -163,24 +126,34 @@ export function MediaStep({ formData, updateFormData }: MediaStepProps) {
       <div className="space-y-4">
         <Label className="flex items-center space-x-2">
           <Video className="h-4 w-4 text-red-500" />
-          <span>Upload de vídeos</span>
+          <span>Upload de vídeos do dispositivo</span>
         </Label>
         
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <Input
-            type="file"
-            accept="video/*"
-            multiple
-            onChange={handleVideoUpload}
-            className="hidden"
-            id="video-upload"
-          />
-          <Label htmlFor="video-upload" className="cursor-pointer">
-            <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Clique para selecionar vídeos</p>
-            <p className="text-sm text-gray-500">Máximo 3 vídeos, até 50MB cada</p>
-          </Label>
-        </div>
+        <MediaUpload
+          accept="video"
+          maxSizeMB={50}
+          onUploadComplete={handleVideoUpload}
+          showPreview={false}
+        />
+
+        {formData.videos?.uploaded && formData.videos.uploaded.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {formData.videos.uploaded.map((video: string, index: number) => (
+              <div key={index} className="relative border rounded-lg overflow-hidden">
+                <video src={video} className="w-full h-40 object-cover" controls />
+                <div className="absolute top-2 right-2">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => removeVideo(index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="bg-red-50 p-4 rounded-lg border border-red-200">
