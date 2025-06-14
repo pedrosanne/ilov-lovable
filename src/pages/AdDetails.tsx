@@ -1,4 +1,3 @@
-
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,8 +23,9 @@ const AdDetails = () => {
   const handleWhatsAppClick = () => {
     if (ad) {
       recordClick.mutate(ad.id);
-      const message = `Olá! Tenho interesse no serviço: ${ad.title}`;
-      const whatsappUrl = `https://wa.me/55${ad.whatsapp}?text=${encodeURIComponent(message)}`;
+      const numbersOnly = ad.whatsapp.replace(/\D/g, '');
+      const fullNumber = numbersOnly.startsWith('55') ? numbersOnly : `55${numbersOnly}`;
+      const whatsappUrl = `whatsapp://send?phone=${fullNumber}&text=Ol%C3%A1%2C%20te%20encontrei%20no%20iLove%21`;
       window.open(whatsappUrl, '_blank');
     }
   };
