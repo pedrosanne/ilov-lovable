@@ -16,6 +16,10 @@ export function useCreateAdFormV2() {
   const navigate = useNavigate();
   const gamification = useGamification();
 
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const updateFormData = useCallback((updates: Partial<AdFormDataV2>) => {
     setFormData(prev => {
       const newData = { ...prev, ...updates };
@@ -71,6 +75,7 @@ export function useCreateAdFormV2() {
     submitAd,
     isSubmitting: createAd.isPending,
     completionPercentage,
-    gamification
+    gamification,
+    scrollToTop
   };
 }

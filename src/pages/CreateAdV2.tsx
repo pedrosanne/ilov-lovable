@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -31,8 +30,19 @@ const CreateAdV2 = () => {
     submitAd, 
     isSubmitting, 
     completionPercentage,
-    gamification 
+    gamification,
+    scrollToTop
   } = useCreateAdFormV2();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    scrollToTop();
+  }, [scrollToTop]);
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    scrollToTop();
+  }, [currentStep, scrollToTop]);
 
   if (loading) {
     return (
