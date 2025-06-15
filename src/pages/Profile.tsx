@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -5,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
+import { ProfileStats } from '@/components/profile/ProfileStats';
 import { StoriesRow } from '@/components/profile/StoriesRow';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
 import { ClientProfileTabs } from '@/components/profile/ClientProfileTabs';
@@ -67,12 +69,12 @@ const Profile = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
         <Header />
         <div className="flex-1 container mx-auto px-4 py-8">
-          <Skeleton className="h-64 w-full mb-4" />
-          <Skeleton className="h-32 w-full mb-4" />
-          <Skeleton className="h-96 w-full" />
+          <Skeleton className="h-64 w-full mb-6 rounded-xl" />
+          <Skeleton className="h-32 w-full mb-6 rounded-xl" />
+          <Skeleton className="h-96 w-full rounded-xl" />
         </div>
         <Footer />
       </div>
@@ -81,11 +83,12 @@ const Profile = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
         <Header />
         <div className="flex-1 container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">Perfil não encontrado</h2>
+          <div className="text-center py-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Perfil não encontrado</h2>
+            <p className="text-gray-600">O usuário que você está procurando não existe.</p>
           </div>
         </div>
         <Footer />
@@ -94,8 +97,6 @@ const Profile = () => {
   }
 
   const isOwnProfile = user?.id === profile.id;
-  
-  // Determinar qual tipo de perfil mostrar
   const showProviderProfile = profileViewType === 'provider' && profile.is_provider;
 
   const handleStartConversation = () => {
@@ -118,9 +119,7 @@ const Profile = () => {
       case 'favorites':
         return isOwnProfile ? <FavoritesSection /> : null;
       case 'messages':
-        return isOwnProfile ? (
-          <MessagesSystem />
-        ) : null;
+        return isOwnProfile ? <MessagesSystem /> : null;
       case 'upgrade':
         return isOwnProfile ? <UpgradeToProvider /> : null;
       case 'settings':
@@ -131,21 +130,27 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
       <Header />
       
-      <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
         <ProfileHeader 
           profile={profile} 
           isOwnProfile={isOwnProfile}
           onStartConversation={!isOwnProfile ? handleStartConversation : undefined}
         />
         
+        {/* Estatísticas do perfil */}
+        <ProfileStats 
+          userId={profile.id}
+          isOwnProfile={isOwnProfile}
+        />
+        
         {stories && stories.length > 0 && (
           <StoriesRow stories={stories} />
         )}
 
-        {/* Toggle de tipo de perfil (sempre visível para perfil próprio) */}
+        {/* Toggle de tipo de perfil */}
         {isOwnProfile && (
           <ProfileTypeToggle
             profile={profile}
@@ -154,7 +159,7 @@ const Profile = () => {
           />
         )}
         
-        {/* Renderizar abas diferentes baseado no tipo de perfil */}
+        {/* Renderizar abas baseado no tipo de perfil */}
         {showProviderProfile ? (
           <ProfileTabs 
             activeTab={activeTab} 
