@@ -8,7 +8,6 @@ import { useCreateAdFormV2 } from '@/hooks/useCreateAdFormV2';
 import { AchievementNotification } from '@/components/gamification/AchievementNotification';
 import { AchievementsList } from '@/components/gamification/AchievementsList';
 import { CreateAdHeader } from '@/components/create-ad-v2/CreateAdHeader';
-import { StepIndicator } from '@/components/create-ad-v2/StepIndicator';
 import { NavigationButtons } from '@/components/create-ad-v2/NavigationButtons';
 import { Step1AboutYou } from '@/components/create-ad-v2/Step1AboutYou';
 import { Step2Services } from '@/components/create-ad-v2/Step2Services';
@@ -133,11 +132,6 @@ const CreateAd = () => {
             xp={gamification.xp}
             level={gamification.level}
             progress={progress}
-          />
-
-          <StepIndicator 
-            steps={steps}
-            currentStep={currentStep}
           />
 
           <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-4'}`}>
