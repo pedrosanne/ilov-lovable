@@ -677,6 +677,7 @@ export type Database = {
           profession: string | null
           twitter_handle: string | null
           updated_at: string | null
+          voice_audio_url: string | null
           website: string | null
         }
         Insert: {
@@ -701,6 +702,7 @@ export type Database = {
           profession?: string | null
           twitter_handle?: string | null
           updated_at?: string | null
+          voice_audio_url?: string | null
           website?: string | null
         }
         Update: {
@@ -725,6 +727,7 @@ export type Database = {
           profession?: string | null
           twitter_handle?: string | null
           updated_at?: string | null
+          voice_audio_url?: string | null
           website?: string | null
         }
         Relationships: []

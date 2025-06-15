@@ -1,8 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AdFormDataV2 } from '@/types/adFormV2';
-import { AudioRecorder } from './audio/AudioRecorder';
-import { AudioPlayer } from './audio/AudioPlayer';
+import { CheckCircle, Info } from 'lucide-react';
 
 interface Step6VoiceProps {
   formData: AdFormDataV2;
@@ -10,75 +9,50 @@ interface Step6VoiceProps {
 }
 
 export function Step6Voice({ formData, updateFormData }: Step6VoiceProps) {
-  const handleRecordingComplete = (file: File, url: string) => {
-    updateFormData({ 
-      voice_audio: file,
-      voice_audio_url: url 
-    });
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type.startsWith('audio/')) {
-      if (file.size > 10 * 1024 * 1024) {
-        alert('Arquivo muito grande. Máximo 10MB.');
-        return;
-      }
-      
-      updateFormData({ voice_audio: file });
-      
-      const audioUrl = URL.createObjectURL(file);
-      updateFormData({ voice_audio_url: audioUrl });
-    } else {
-      alert('Por favor, selecione um arquivo de áudio válido.');
-    }
-  };
-
-  const handleDeleteAudio = () => {
-    if (formData.voice_audio_url) {
-      URL.revokeObjectURL(formData.voice_audio_url);
-    }
-    updateFormData({ 
-      voice_audio: null,
-      voice_audio_url: null 
-    });
-  };
-
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          🎤 Sua Voz
+          🎤 Apresentação em Áudio
         </h2>
         <p className="text-lg text-gray-600">
-          Grave um áudio de até 1 minuto para se apresentar aos clientes
+          Seu áudio de apresentação será usado em todos os seus anúncios
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Gravação de Apresentação</CardTitle>
+          <CardTitle className="text-xl flex items-center">
+            <CheckCircle className="h-6 w-6 text-green-500 mr-2" />
+            Áudio de Perfil
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {!formData.voice_audio ? (
-            <AudioRecorder 
-              onRecordingComplete={handleRecordingComplete}
-              onFileUpload={handleFileUpload}
-            />
-          ) : (
-            <AudioPlayer 
-              audioUrl={formData.voice_audio_url || ''}
-              onDelete={handleDeleteAudio}
-            />
-          )}
-
+        <CardContent className="space-y-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-blue-800 mb-2">💡 Dicas para uma boa gravação:</h4>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>• Fale em ambiente silencioso</li>
-              <li>• Se apresente de forma natural e calorosa</li>
-              <li>• Mencione seus diferenciais e especialidades</li>
-              <li>• Máximo de 1 minuto de duração</li>
+            <div className="flex items-start space-x-3">
+              <Info className="h-5 w-5 text-blue-500 mt-0.5" />
+              <div>
+                <h4 className="font-medium text-blue-800 mb-2">
+                  Áudio de apresentação configurado no perfil
+                </h4>
+                <p className="text-sm text-blue-700 mb-3">
+                  O áudio que você gravou no seu perfil será automaticamente incluído em todos os seus anúncios. 
+                  Isso permite que os clientes ouçam sua voz e conheçam melhor sua personalidade.
+                </p>
+                <p className="text-sm text-blue-600">
+                  Para gravar ou alterar seu áudio de apresentação, acesse as configurações do seu perfil.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 className="font-medium text-green-800 mb-2">✅ Benefícios do áudio no perfil:</h4>
+            <ul className="text-sm text-green-700 space-y-1">
+              <li>• Usado automaticamente em todos os seus anúncios</li>
+              <li>• Clientes podem conhecer sua voz antes do contato</li>
+              <li>• Aumenta a confiança e conexão com clientes</li>
+              <li>• Você só precisa gravar uma vez</li>
             </ul>
           </div>
         </CardContent>

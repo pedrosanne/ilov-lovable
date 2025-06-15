@@ -1,73 +1,78 @@
 
-import { Database } from '@/types/database';
-
-export type AdFormDataV2 = {
-  // Step 1: Quem é você?
+export interface AdFormDataV2 {
+  // Dados pessoais
   presentation_name: string;
   age: number | null;
   gender: string;
-  title: string;
-  description: string;
-  
-  // Step 2: Seus serviços
-  category: Database['public']['Tables']['ads']['Row']['category'];
+  ethnicity: string;
+  height: number | null;
+  weight: number | null;
+  body_type: string;
+  languages: string[];
+
+  // Frase de destaque
+  highlight_phrase: string;
+
+  // Serviços
   services_offered: string[];
+  target_audience: string[];
+  service_locations: string[];
+
+  // Disponibilidade
   availability_days: string[];
-  location: string;
+  availability_hours: {
+    [key: string]: { start: string; end: string };
+  };
+  appointment_only: boolean;
+
+  // Localização
   neighborhood: string;
-  
-  // Step 3: Seus valores
-  hourly_rate: number;
-  price: number | null;
-  highlight_package: string;
-  
-  // Step 4: Sua vitrine
+  postal_code: string;
+  accepts_travel: boolean;
+
+  // Preços
+  hourly_rate: number | null;
+  packages: {
+    name: string;
+    duration: string;
+    price: number;
+    description: string;
+  }[];
+
+  // Métodos de pagamento
+  payment_methods: string[];
+
+  // Mídia
   photos: File[];
   videos: File[];
-  image_url: string | null;
-  video_url: string | null;
-  
-  // Step 5: Como te encontrar
+
+  // Contatos
   whatsapp: string;
-  
-  // Step 6: Sua voz
-  voice_audio: File | null;
-  voice_audio_url: string | null;
-  
-  // Step 7: Finalizando
+  contact_telegram: string;
+  contact_instagram: string;
+  contact_email: string;
+  contact_other: string;
+
+  // Preferências e extras
+  accepts_last_minute: boolean;
+  restrictions: string;
+  personal_rules: string;
+  favorite_fragrance: string;
+  favorite_drink: string;
+  preferred_gifts: string;
+  favorite_music: string;
+
+  // Pacote de destaque
+  highlight_package: string;
+
+  // Termos
   terms_accepted: boolean;
   age_confirmed: boolean;
   image_consent: boolean;
-  restrictions: string;
-  favorite_fragrance: string;
-  favorite_drink: string;
-};
 
-export const initialFormData: AdFormDataV2 = {
-  presentation_name: '',
-  age: null,
-  gender: '',
-  title: '',
-  description: '',
-  category: 'acompanhante',
-  services_offered: [],
-  availability_days: [],
-  location: '',
-  neighborhood: '',
-  hourly_rate: 0,
-  price: null,
-  highlight_package: 'basic',
-  photos: [],
-  videos: [],
-  image_url: null,
-  video_url: null,
-  whatsapp: '',
-  voice_audio: null,
-  voice_audio_url: null,
-  terms_accepted: false,
-  age_confirmed: false,
-  image_consent: false,
-  restrictions: '',
-  favorite_fragrance: '',
-  favorite_drink: ''
-};
+  // Categorias e outros
+  category: 'acompanhante';
+  title: string;
+  description: string;
+  location: string;
+}

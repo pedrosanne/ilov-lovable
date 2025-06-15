@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar, Globe, Mail, Phone, Instagram, Twitter } from 'lucide-react';
+import { MapPin, Globe, Instagram, Twitter, Phone, User, Briefcase } from 'lucide-react';
+import { ProfileVoicePlayer } from './ProfileVoicePlayer';
 
 interface ProfileInfoProps {
   profile: any;
@@ -9,130 +9,109 @@ interface ProfileInfoProps {
 }
 
 export function ProfileInfo({ profile, isOwnProfile }: ProfileInfoProps) {
+  const InfoItem = ({ icon: Icon, label, value, link }: any) => {
+    if (!value) return null;
+
+    const content = (
+      <div className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+        <Icon className="h-5 w-5 text-gray-500" />
+        <div>
+          <p className="text-sm font-medium text-gray-900">{label}</p>
+          <p className="text-sm text-gray-600">{value}</p>
+        </div>
+      </div>
+    );
+
+    if (link) {
+      return (
+        <a href={link} target="_blank" rel="noopener noreferrer" className="block">
+          {content}
+        </a>
+      );
+    }
+
+    return content;
+  };
+
   return (
-    <div className="grid gap-6 md:grid-cols-2">
-      {/* Informações Básicas */}
+    <div className="space-y-6">
+      {/* Áudio de apresentação */}
+      {profile.voice_audio_url && (
+        <ProfileVoicePlayer 
+          audioUrl={profile.voice_audio_url}
+          userName={profile.presentation_name || profile.full_name || 'Usuário'}
+        />
+      )}
+
       <Card>
         <CardHeader>
-          <CardTitle>Informações Básicas</CardTitle>
+          <CardTitle>Informações Pessoais</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {profile.bio && (
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Sobre</h4>
-              <p className="text-gray-700">{profile.bio}</p>
-            </div>
-          )}
-          
-          {profile.profession && (
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Profissão</h4>
-              <p className="text-gray-700">{profile.profession}</p>
-            </div>
-          )}
-
-          {profile.location && (
-            <div className="flex items-center text-gray-700">
-              <MapPin className="h-4 w-4 mr-2" />
-              {profile.location}
-            </div>
-          )}
-
-          {profile.birth_date && (
-            <div className="flex items-center text-gray-700">
-              <Calendar className="h-4 w-4 mr-2" />
-              Nascido em {new Date(profile.birth_date).getFullYear()}
-            </div>
+        <CardContent className="space-y-2">
+          <InfoItem
+            icon={User}
+            label="Nome Completo"
+            value={profile.full_name}
+          />
+          <InfoItem
+            icon={User}
+            label="Nome de Apresentação"
+            value={profile.presentation_name}
+          />
+          <InfoItem
+            icon={Briefcase}
+            label="Profissão"
+            value={profile.profession}
+          />
+          <InfoItem
+            icon={MapPin}
+            label="Localização"
+            value={profile.location}
+          />
+          {isOwnProfile && (
+            <InfoItem
+              icon={Phone}
+              label="Telefone"
+              value={profile.phone}
+            />
           )}
         </CardContent>
       </Card>
 
-      {/* Contato */}
+      {profile.bio && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Sobre</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
-          <CardTitle>Contato</CardTitle>
+          <CardTitle>Links e Contatos</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {profile.email && (
-            <div className="flex items-center text-gray-700">
-              <Mail className="h-4 w-4 mr-2" />
-              <a href={`mailto:${profile.email}`} className="hover:text-blue-600">
-                {profile.email}
-              </a>
-            </div>
-          )}
-
-          {profile.phone && (
-            <div className="flex items-center text-gray-700">
-              <Phone className="h-4 w-4 mr-2" />
-              <a href={`tel:${profile.phone}`} className="hover:text-blue-600">
-                {profile.phone}
-              </a>
-            </div>
-          )}
-
-          {profile.website && (
-            <div className="flex items-center text-gray-700">
-              <Globe className="h-4 w-4 mr-2" />
-              <a href={profile.website} target="_blank" className="hover:text-blue-600">
-                {profile.website}
-              </a>
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-2">
-            {profile.instagram_handle && (
-              <Badge variant="secondary" className="flex items-center">
-                <Instagram className="h-3 w-3 mr-1" />
-                @{profile.instagram_handle}
-              </Badge>
-            )}
-            
-            {profile.twitter_handle && (
-              <Badge variant="secondary" className="flex items-center">
-                <Twitter className="h-3 w-3 mr-1" />
-                @{profile.twitter_handle}
-              </Badge>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Estatísticas */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Estatísticas</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{profile.posts_count || 0}</div>
-              <div className="text-sm text-gray-500">Posts</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{profile.followers_count || 0}</div>
-              <div className="text-sm text-gray-500">Seguidores</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{profile.following_count || 0}</div>
-              <div className="text-sm text-gray-500">Seguindo</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Membro desde */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Informações da Conta</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-700">
-            Membro desde {new Date(profile.created_at).toLocaleDateString('pt-BR', {
-              month: 'long',
-              year: 'numeric'
-            })}
-          </p>
+        <CardContent className="space-y-2">
+          <InfoItem
+            icon={Globe}
+            label="Website"
+            value={profile.website}
+            link={profile.website}
+          />
+          <InfoItem
+            icon={Instagram}
+            label="Instagram"
+            value={profile.instagram_handle}
+            link={profile.instagram_handle ? `https://instagram.com/${profile.instagram_handle.replace('@', '')}` : null}
+          />
+          <InfoItem
+            icon={Twitter}
+            label="Twitter"
+            value={profile.twitter_handle}
+            link={profile.twitter_handle ? `https://twitter.com/${profile.twitter_handle.replace('@', '')}` : null}
+          />
         </CardContent>
       </Card>
     </div>

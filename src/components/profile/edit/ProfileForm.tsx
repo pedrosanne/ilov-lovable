@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileAvatarUpload } from './ProfileAvatarUpload';
 import { ProfileFormFields, ProfileFormData } from './ProfileFormFields';
+import { ProfileVoiceAudio } from './ProfileVoiceAudio';
 
 interface ProfileFormProps {
   profile: any;
@@ -23,8 +24,10 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
     instagram_handle: profile.instagram_handle || '',
     twitter_handle: profile.twitter_handle || '',
     phone: profile.phone || '',
+    voice_audio_url: profile.voice_audio_url || null,
   });
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '');
+  const [voiceAudioUrl, setVoiceAudioUrl] = useState(profile.voice_audio_url || null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -57,15 +60,24 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfileMutation.mutate({ ...formData, avatar_url: avatarUrl });
+    updateProfileMutation.mutate({ 
+      ...formData, 
+      avatar_url: avatarUrl,
+      voice_audio_url: voiceAudioUrl
+    });
   };
 
   const handleFieldChange = (field: keyof ProfileFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleVoiceAudioChange = (url: string | null) => {
+    setVoiceAudioUrl(url);
+    setFormData(prev => ({ ...prev, voice_audio_url: url }));
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <ProfileAvatarUpload
         avatarUrl={avatarUrl}
         fullName={formData.full_name}
@@ -76,6 +88,11 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
       <ProfileFormFields
         formData={formData}
         onFieldChange={handleFieldChange}
+      />
+
+      <ProfileVoiceAudio
+        voiceAudioUrl={voiceAudioUrl}
+        onAudioChange={handleVoiceAudioChange}
       />
 
       <div className="flex justify-end space-x-2 pt-4">
