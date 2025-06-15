@@ -34,12 +34,17 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileFormData & { avatar_url?: string }) => {
+      console.log('Atualizando perfil com dados:', data);
+      
       const { error } = await supabase
         .from('profiles')
         .update(data)
         .eq('id', profile.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao atualizar perfil:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       toast({
@@ -49,7 +54,8 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       onClose();
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Erro na mutação:', error);
       toast({
         title: "Erro",
         description: "Não foi possível atualizar o perfil. Tente novamente.",
@@ -60,6 +66,13 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log('Enviando dados do perfil:', {
+      ...formData,
+      avatar_url: avatarUrl,
+      voice_audio_url: voiceAudioUrl
+    });
+    
     updateProfileMutation.mutate({ 
       ...formData, 
       avatar_url: avatarUrl,
@@ -72,6 +85,7 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
   };
 
   const handleVoiceAudioChange = (url: string | null) => {
+    console.log('Áudio de voz alterado:', url);
     setVoiceAudioUrl(url);
     setFormData(prev => ({ ...prev, voice_audio_url: url }));
   };

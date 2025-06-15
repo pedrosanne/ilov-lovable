@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AudioRecorder } from '@/components/create-ad-v2/audio/AudioRecorder';
 import { AudioPlayer } from '@/components/create-ad-v2/audio/AudioPlayer';
@@ -13,7 +13,23 @@ interface ProfileVoiceAudioProps {
 export function ProfileVoiceAudio({ voiceAudioUrl, onAudioChange }: ProfileVoiceAudioProps) {
   const [audioFile, setAudioFile] = useState<File | null>(null);
 
+  // Limpar URL do objeto quando componente for desmontado
+  useEffect(() => {
+    return () => {
+      if (voiceAudioUrl && voiceAudioUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(voiceAudioUrl);
+      }
+    };
+  }, [voiceAudioUrl]);
+
   const handleRecordingComplete = (file: File, url: string) => {
+    console.log('Gravação completa no perfil:', file.name, file.size);
+    
+    // Limpar URL anterior se existir
+    if (voiceAudioUrl && voiceAudioUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(voiceAudioUrl);
+    }
+    
     setAudioFile(file);
     onAudioChange(url);
   };
@@ -26,6 +42,13 @@ export function ProfileVoiceAudio({ voiceAudioUrl, onAudioChange }: ProfileVoice
         return;
       }
       
+      console.log('Upload de arquivo de áudio:', file.name, file.size);
+      
+      // Limpar URL anterior se existir
+      if (voiceAudioUrl && voiceAudioUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(voiceAudioUrl);
+      }
+      
       setAudioFile(file);
       const audioUrl = URL.createObjectURL(file);
       onAudioChange(audioUrl);
@@ -35,7 +58,9 @@ export function ProfileVoiceAudio({ voiceAudioUrl, onAudioChange }: ProfileVoice
   };
 
   const handleDeleteAudio = () => {
-    if (voiceAudioUrl) {
+    console.log('Deletando áudio do perfil');
+    
+    if (voiceAudioUrl && voiceAudioUrl.startsWith('blob:')) {
       URL.revokeObjectURL(voiceAudioUrl);
     }
     setAudioFile(null);
