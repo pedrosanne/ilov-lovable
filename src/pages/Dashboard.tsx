@@ -13,11 +13,54 @@ import { useAdStats } from '@/hooks/useAds';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 import { Navigate, Link } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const { data: stats, isLoading: statsLoading } = useAdStats();
   const { isVerified, hasVerification, verificationStatus } = useVerificationStatus();
+
+  // Get real favorites count
+  const { data: favoritesCount } = useQuery({
+    queryKey: ['favorites-count'],
+    queryFn: async () => {
+      if (!user) return 0;
+      
+      const { data: userAds } = await supabase
+        .from('ads')
+        .select('id')
+        .eq('user_id', user.id);
+
+      if (!userAds || userAds.length === 0) return 0;
+
+      const adIds = userAds.map(ad => ad.id);
+      
+      const { count } = await supabase
+        .from('favorites')
+        .select('*', { count: 'exact', head: true })
+        .in('ad_id', adIds);
+
+      return count || 0;
+    },
+    enabled: !!user,
+  });
+
+  // Get real messages count
+  const { data: messagesCount } = useQuery({
+    queryKey: ['messages-count'],
+    queryFn: async () => {
+      if (!user) return 0;
+      
+      const { count } = await supabase
+        .from('conversations')
+        .select('*', { count: 'exact', head: true })
+        .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`);
+
+      return count || 0;
+    },
+    enabled: !!user,
+  });
 
   if (loading) {
     return (
@@ -98,7 +141,7 @@ const Dashboard = () => {
     }
   };
 
-  // Calculate conversion rate
+  // Calculate conversion rate with real data
   const conversionRate = stats?.totalViews && stats?.totalClicks 
     ? ((stats.totalClicks / stats.totalViews) * 100).toFixed(1)
     : '0';
@@ -114,7 +157,7 @@ const Dashboard = () => {
             Dashboard do Anunciante
           </h1>
           <p className="text-gray-600 text-lg">
-            Acompanhe o desempenho dos seus anúncios e otimize seus resultados
+            Acompanhe o desempenho dos seus anúncios com dados reais e precisos
           </p>
         </div>
 
@@ -125,56 +168,53 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* KPI Metrics Cards */}
+        {/* KPI Metrics Cards - All Real Data */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           <MetricsCard
             title="Visualizações do Perfil"
             value={statsLoading ? '...' : stats?.totalViews || 0}
             icon={Eye}
-            trend={{ value: 12, isPositive: true }}
-            subtitle="últimos 30 dias"
+            trend={stats?.totalViews ? { value: 0, isPositive: true } : undefined}
+            subtitle="total acumulado"
           />
           
           <MetricsCard
             title="Cliques no WhatsApp"
             value={statsLoading ? '...' : stats?.totalClicks || 0}
             icon={MessageCircle}
-            trend={{ value: 8, isPositive: true }}
-            subtitle="últimos 30 dias"
-          />
-          
-          <MetricsCard
-            title="Favoritos"
-            value={statsLoading ? '...' : Math.floor((stats?.totalViews || 0) * 0.15)}
-            icon={Heart}
-            trend={{ value: 15, isPositive: true }}
+            trend={stats?.totalClicks ? { value: 0, isPositive: true } : undefined}
             subtitle="total acumulado"
           />
           
           <MetricsCard
-            title="Mensagens Recebidas"
-            value={statsLoading ? '...' : stats?.totalMessages || 0}
+            title="Favoritos"
+            value={favoritesCount !== undefined ? favoritesCount : '...'}
+            icon={Heart}
+            subtitle="total acumulado"
+          />
+          
+          <MetricsCard
+            title="Conversas Iniciadas"
+            value={messagesCount !== undefined ? messagesCount : '...'}
             icon={Users}
-            trend={{ value: 20, isPositive: true }}
-            subtitle="últimos 30 dias"
+            subtitle="total acumulado"
           />
           
           <MetricsCard
             title="Taxa de Conversão"
             value={`${conversionRate}%`}
             icon={TrendingUp}
-            trend={{ value: 5, isPositive: true }}
             subtitle="cliques/visualizações"
           />
         </div>
 
-        {/* Charts and Insights */}
+        {/* Charts and Insights - Real Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <EngagementChart />
           <TrafficSourceChart />
         </div>
 
-        {/* Insights and Actions */}
+        {/* Insights and Actions - Real Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <InsightsSection />
           <QuickActions />

@@ -144,6 +144,7 @@ export function useAdStats() {
         throw new Error('User not authenticated');
       }
 
+      // Get user's ads with real view and click counts
       const { data: ads, error: adsError } = await supabase
         .from('ads')
         .select('id, views_count, clicks_count')
@@ -157,11 +158,17 @@ export function useAdStats() {
       const totalViews = ads.reduce((sum, ad) => sum + (ad.views_count || 0), 0);
       const totalClicks = ads.reduce((sum, ad) => sum + (ad.clicks_count || 0), 0);
 
+      // Get real message count from conversations
+      const { count: conversationsCount } = await supabase
+        .from('conversations')
+        .select('*', { count: 'exact', head: true })
+        .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`);
+
       return {
         totalAds,
         totalViews,
         totalClicks,
-        totalMessages: 0, // Será implementado quando tivermos a tabela de mensagens
+        totalMessages: conversationsCount || 0,
       };
     },
   });
