@@ -142,7 +142,7 @@ export function PostCard({ post, isOwnProfile, onUpdate }: PostCardProps) {
   const hasMultipleMedia = mediaUrls.length > 1;
 
   return (
-    <Card className="shadow-sm max-w-lg mx-auto">
+    <Card className="shadow-sm w-full max-w-lg mx-auto">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -190,10 +190,12 @@ export function PostCard({ post, isOwnProfile, onUpdate }: PostCardProps) {
       </CardHeader>
 
       <CardContent className="p-0">
-        {/* Content Text */}
+        {/* Content Text - agora com altura mínima para posts somente texto */}
         {post.content && (
-          <div className="px-6 pb-4">
-            <p className="text-gray-900">{post.content}</p>
+          <div className={`px-6 ${mediaUrls.length === 0 ? 'py-8 min-h-[200px] flex items-center' : 'pb-4'}`}>
+            <p className={`text-gray-900 ${mediaUrls.length === 0 ? 'text-lg leading-relaxed text-center w-full' : ''}`}>
+              {post.content}
+            </p>
           </div>
         )}
 
