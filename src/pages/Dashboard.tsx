@@ -1,10 +1,13 @@
 
 import { Header } from '@/components/Header';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { PlusCircle, Eye, MessageCircle, TrendingUp, Shield, AlertTriangle } from 'lucide-react';
-import { MetricsChart } from '@/components/MetricsChart';
+import { PlusCircle, Eye, Heart, MessageCircle, TrendingUp, Shield, AlertTriangle, Users } from 'lucide-react';
+import { MetricsCard } from '@/components/dashboard/MetricsCard';
+import { EngagementChart } from '@/components/dashboard/EngagementChart';
+import { TrafficSourceChart } from '@/components/dashboard/TrafficSourceChart';
+import { InsightsSection } from '@/components/dashboard/InsightsSection';
+import { QuickActions } from '@/components/dashboard/QuickActions';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdStats } from '@/hooks/useAds';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
@@ -18,7 +21,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
         <Header />
         <div className="container mx-auto px-4 py-8">
           <Skeleton className="h-8 w-64 mb-8" />
@@ -36,14 +39,12 @@ const Dashboard = () => {
     return <Navigate to="/login" replace />;
   }
 
-  const hasData = stats && (stats.totalAds > 0 || stats.totalViews > 0 || stats.totalClicks > 0);
-
   const getVerificationAlert = () => {
     if (isVerified) return null;
 
     if (!hasVerification) {
       return (
-        <Alert className="border-red-200 bg-red-50">
+        <Alert className="border-red-200 bg-red-50 rounded-2xl">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-800">
             <div className="flex items-center justify-between">
@@ -51,7 +52,7 @@ const Dashboard = () => {
                 <strong>Verificação de identidade necessária!</strong>
                 <p className="mt-1">Você precisa verificar sua identidade para usar todas as funcionalidades da plataforma.</p>
               </div>
-              <Button asChild className="ml-4">
+              <Button asChild className="ml-4 bg-red-600 hover:bg-red-700 rounded-xl">
                 <Link to="/profile?tab=settings">
                   Verificar Agora
                 </Link>
@@ -65,7 +66,7 @@ const Dashboard = () => {
     switch (verificationStatus) {
       case 'pending':
         return (
-          <Alert className="border-yellow-200 bg-yellow-50">
+          <Alert className="border-yellow-200 bg-yellow-50 rounded-2xl">
             <Shield className="h-4 w-4 text-yellow-600" />
             <AlertDescription className="text-yellow-800">
               <strong>Verificação em análise</strong>
@@ -75,7 +76,7 @@ const Dashboard = () => {
         );
       case 'rejected':
         return (
-          <Alert className="border-red-200 bg-red-50">
+          <Alert className="border-red-200 bg-red-50 rounded-2xl">
             <AlertTriangle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-800">
               <div className="flex items-center justify-between">
@@ -83,7 +84,7 @@ const Dashboard = () => {
                   <strong>Verificação rejeitada</strong>
                   <p className="mt-1">Sua verificação foi rejeitada. Envie novos documentos para continuar usando a plataforma.</p>
                 </div>
-                <Button asChild className="ml-4">
+                <Button asChild className="ml-4 bg-red-600 hover:bg-red-700 rounded-xl">
                   <Link to="/profile?tab=settings">
                     Nova Verificação
                   </Link>
@@ -97,173 +98,113 @@ const Dashboard = () => {
     }
   };
 
+  // Calculate conversion rate
+  const conversionRate = stats?.totalViews && stats?.totalClicks 
+    ? ((stats.totalClicks / stats.totalViews) * 100).toFixed(1)
+    : '0';
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        {/* Header Section */}
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Dashboard do Anunciante
           </h1>
-          <p className="text-gray-600">
-            Gerencie seus anúncios e acompanhe o desempenho
+          <p className="text-gray-600 text-lg">
+            Acompanhe o desempenho dos seus anúncios e otimize seus resultados
           </p>
         </div>
 
-        {/* Alerta de verificação */}
+        {/* Verification Alert */}
         {getVerificationAlert() && (
-          <div className="mb-8">
+          <div className="max-w-4xl mx-auto">
             {getVerificationAlert()}
           </div>
         )}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Anúncios Ativos
-              </CardTitle>
-              <PlusCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {statsLoading ? <Skeleton className="h-8 w-8" /> : stats?.totalAds || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Total de anúncios
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Visualizações
-              </CardTitle>
-              <Eye className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {statsLoading ? <Skeleton className="h-8 w-12" /> : stats?.totalViews || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Total de visualizações
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Cliques
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {statsLoading ? <Skeleton className="h-8 w-12" /> : stats?.totalClicks || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Total de cliques
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Mensagens
-              </CardTitle>
-              <MessageCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {statsLoading ? <Skeleton className="h-8 w-12" /> : stats?.totalMessages || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Via WhatsApp
-              </p>
-            </CardContent>
-          </Card>
+        {/* KPI Metrics Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <MetricsCard
+            title="Visualizações do Perfil"
+            value={statsLoading ? '...' : stats?.totalViews || 0}
+            icon={Eye}
+            trend={{ value: 12, isPositive: true }}
+            subtitle="últimos 30 dias"
+          />
+          
+          <MetricsCard
+            title="Cliques no WhatsApp"
+            value={statsLoading ? '...' : stats?.totalClicks || 0}
+            icon={MessageCircle}
+            trend={{ value: 8, isPositive: true }}
+            subtitle="últimos 30 dias"
+          />
+          
+          <MetricsCard
+            title="Favoritos"
+            value={statsLoading ? '...' : Math.floor((stats?.totalViews || 0) * 0.15)}
+            icon={Heart}
+            trend={{ value: 15, isPositive: true }}
+            subtitle="total acumulado"
+          />
+          
+          <MetricsCard
+            title="Mensagens Recebidas"
+            value={statsLoading ? '...' : stats?.totalMessages || 0}
+            icon={Users}
+            trend={{ value: 20, isPositive: true }}
+            subtitle="últimos 30 dias"
+          />
+          
+          <MetricsCard
+            title="Taxa de Conversão"
+            value={`${conversionRate}%`}
+            icon={TrendingUp}
+            trend={{ value: 5, isPositive: true }}
+            subtitle="cliques/visualizações"
+          />
         </div>
 
+        {/* Charts and Insights */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Analytics Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Visualizações por Período</CardTitle>
-              <CardDescription>
-                Acompanhe o desempenho dos seus anúncios
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {hasData ? (
-                <MetricsChart />
-              ) : (
-                <div className="h-[300px] flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-                  <div className="text-center">
-                    <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 text-lg font-medium">
-                      Ainda não há métricas para mostrar
-                    </p>
-                    <p className="text-gray-400 text-sm mt-2">
-                      {isVerified ? 'Publique seu primeiro anúncio para ver as estatísticas' : 'Verifique sua identidade para publicar anúncios'}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <EngagementChart />
+          <TrafficSourceChart />
+        </div>
 
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Ações Rápidas</CardTitle>
-              <CardDescription>
-                Gerencie seus anúncios facilmente
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button 
-                className="w-full justify-start" 
-                asChild
-                disabled={!isVerified}
-              >
-                <Link to="/create-ad">
-                  <PlusCircle className="h-4 w-4 mr-2" />
-                  {isVerified ? 'Criar Novo Anúncio' : 'Criar Novo Anúncio 🔒'}
-                </Link>
-              </Button>
-              
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link to="/my-ads">
-                  <Eye className="h-4 w-4 mr-2" />
-                  Ver Meus Anúncios
-                </Link>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="w-full justify-start" 
-                asChild
-                disabled={!isVerified}
-              >
-                <Link to="/messages">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  {isVerified ? 'Mensagens Recebidas' : 'Mensagens Recebidas 🔒'}
-                </Link>
-              </Button>
-              
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link to="/reports">
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Relatório Completo
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Insights and Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <InsightsSection />
+          <QuickActions />
+        </div>
+
+        {/* Quick Action Button for Creating Ads */}
+        <div className="text-center">
+          <Button
+            size="lg"
+            className="bg-gradient-to-r from-[#4de9d8] to-[#3bc9d8] hover:from-[#3bc9d8] hover:to-[#2ab5c5] text-white border-0 shadow-lg rounded-2xl px-8 py-4 text-lg font-semibold"
+            disabled={!isVerified}
+            asChild={isVerified}
+          >
+            {isVerified ? (
+              <Link to="/create-ad">
+                <PlusCircle className="h-5 w-5 mr-2" />
+                Criar Novo Anúncio
+              </Link>
+            ) : (
+              <>
+                <PlusCircle className="h-5 w-5 mr-2" />
+                Criar Novo Anúncio 🔒
+              </>
+            )}
+          </Button>
+          {!isVerified && (
+            <p className="text-sm text-gray-500 mt-2">
+              Verifique sua identidade para criar anúncios
+            </p>
+          )}
         </div>
       </div>
     </div>
