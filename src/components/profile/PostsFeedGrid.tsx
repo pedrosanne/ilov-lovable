@@ -87,6 +87,8 @@ export function PostsFeedGrid({ userId, isOwnProfile, viewMode }: PostsFeedGridP
                         src={firstMediaUrl}
                         className="w-full h-full object-cover"
                         muted
+                        playsInline
+                        preload="metadata"
                       />
                     ) : (
                       <img
@@ -137,7 +139,7 @@ export function PostsFeedGrid({ userId, isOwnProfile, viewMode }: PostsFeedGridP
 
         {/* Modal para visualizar post completo */}
         <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
-          <DialogContent className="max-w-4xl h-[90vh] p-0">
+          <DialogContent className="max-w-lg h-[90vh] p-0">
             {selectedPost && (
               <div className="h-full overflow-y-auto">
                 <PostCard 
@@ -155,7 +157,7 @@ export function PostsFeedGrid({ userId, isOwnProfile, viewMode }: PostsFeedGridP
 
   // View mode: feed
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 max-w-lg mx-auto">
       {posts.map((post) => (
         <PostCard 
           key={post.id} 

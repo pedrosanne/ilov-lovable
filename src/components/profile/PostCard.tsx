@@ -73,7 +73,7 @@ export function PostCard({ post, isOwnProfile, onUpdate }: PostCardProps) {
   const hasMultipleMedia = mediaUrls.length > 1;
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-sm max-w-lg mx-auto">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -122,19 +122,12 @@ export function PostCard({ post, isOwnProfile, onUpdate }: PostCardProps) {
                   <video 
                     src={mediaUrls[currentMediaIndex]}
                     className="w-full h-full object-cover"
-                    controls={post.media_type === 'video'}
-                    loop={post.media_type === 'reel'}
-                    muted={post.media_type === 'reel'}
-                  />
-                  {post.media_type === 'reel' && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute bottom-4 right-4 bg-black/60 text-white hover:bg-black/80"
-                    >
-                      <Play className="h-4 w-4" />
-                    </Button>
-                  )}
+                    controls
+                    playsInline
+                    preload="metadata"
+                  >
+                    Seu navegador não suporta o elemento de vídeo.
+                  </video>
                 </div>
               ) : (
                 <img 
