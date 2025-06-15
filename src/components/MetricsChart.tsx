@@ -83,11 +83,11 @@ export function MetricsChart({ period = '7' }: MetricsChartProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 px-2 sm:px-0">
         <div className="flex justify-end">
-          <Skeleton className="h-10 w-40" />
+          <Skeleton className="h-10 w-32 sm:w-40" />
         </div>
-        <Skeleton className="h-[300px] w-full" />
+        <Skeleton className="h-[250px] sm:h-[300px] w-full" />
       </div>
     );
   }
@@ -95,10 +95,10 @@ export function MetricsChart({ period = '7' }: MetricsChartProps) {
   const hasData = chartData && chartData.some(item => item.views > 0 || item.clicks > 0);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-2 sm:px-0">
       <div className="flex justify-end">
         <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-32 sm:w-40">
             <Calendar className="h-4 w-4 mr-2" />
             <SelectValue />
           </SelectTrigger>
@@ -112,12 +112,24 @@ export function MetricsChart({ period = '7' }: MetricsChartProps) {
       </div>
 
       {hasData ? (
-        <div className="h-[300px]">
+        <div className="h-[250px] sm:h-[300px] w-full overflow-hidden">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
+            <LineChart 
+              data={chartData}
+              margin={{ 
+                top: 5, 
+                right: 10, 
+                left: 10, 
+                bottom: 5 
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
+              <XAxis 
+                dataKey="day" 
+                tick={{ fontSize: 10 }}
+                interval={chartData.length > 7 ? 'preserveStartEnd' : 0}
+              />
+              <YAxis tick={{ fontSize: 10 }} width={30} />
               <Tooltip />
               <Line 
                 type="monotone" 
@@ -125,6 +137,7 @@ export function MetricsChart({ period = '7' }: MetricsChartProps) {
                 stroke="#3b82f6" 
                 strokeWidth={2}
                 name="Visualizações"
+                dot={{ r: 3 }}
               />
               <Line 
                 type="monotone" 
@@ -132,18 +145,19 @@ export function MetricsChart({ period = '7' }: MetricsChartProps) {
                 stroke="#ef4444" 
                 strokeWidth={2}
                 name="Cliques"
+                dot={{ r: 3 }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
       ) : (
-        <div className="h-[300px] flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-          <div className="text-center">
-            <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg font-medium">
+        <div className="h-[250px] sm:h-[300px] flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+          <div className="text-center px-4">
+            <Calendar className="h-8 sm:h-12 w-8 sm:w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500 text-sm sm:text-lg font-medium">
               Nenhum dado encontrado
             </p>
-            <p className="text-gray-400 text-sm mt-2">
+            <p className="text-gray-400 text-xs sm:text-sm mt-2">
               Dados aparecerão conforme seus anúncios receberem visualizações
             </p>
           </div>

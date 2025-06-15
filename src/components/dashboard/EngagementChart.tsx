@@ -85,13 +85,13 @@ export function EngagementChart() {
   if (isLoading) {
     return (
       <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50/50">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900">
+        <CardHeader className="pb-2 px-3 sm:px-6">
+          <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
             Engajamento dos Últimos 7 Dias
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Skeleton className="h-[300px]" />
+        <CardContent className="px-3 sm:px-6">
+          <Skeleton className="h-[250px] sm:h-[300px]" />
         </CardContent>
       </Card>
     );
@@ -99,54 +99,66 @@ export function EngagementChart() {
 
   return (
     <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50/50">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-semibold text-gray-900">
+      <CardHeader className="pb-2 px-3 sm:px-6">
+        <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
           Engajamento dos Últimos 7 Dias
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <XAxis 
-                dataKey="day" 
-                axisLine={false} 
-                tickLine={false}
-                tick={{ fontSize: 12, fill: '#6b7280' }}
-              />
-              <YAxis 
-                axisLine={false} 
-                tickLine={false}
-                tick={{ fontSize: 12, fill: '#6b7280' }}
-              />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Line 
-                type="monotone" 
-                dataKey="views" 
-                stroke="#4de9d8" 
-                strokeWidth={3}
-                dot={{ fill: '#4de9d8', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: '#4de9d8', strokeWidth: 2 }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="clicks" 
-                stroke="#3b302a" 
-                strokeWidth={3}
-                dot={{ fill: '#3b302a', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: '#3b302a', strokeWidth: 2 }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="messages" 
-                stroke="#8b5cf6" 
-                strokeWidth={3}
-                dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: '#8b5cf6', strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+      <CardContent className="px-2 sm:px-6 pb-4">
+        <div className="w-full overflow-hidden">
+          <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart 
+                data={chartData} 
+                margin={{ 
+                  top: 5, 
+                  right: 10, 
+                  left: 0, 
+                  bottom: 5 
+                }}
+              >
+                <XAxis 
+                  dataKey="day" 
+                  axisLine={false} 
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: '#6b7280' }}
+                  interval={0}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: '#6b7280' }}
+                  width={30}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line 
+                  type="monotone" 
+                  dataKey="views" 
+                  stroke="#4de9d8" 
+                  strokeWidth={2}
+                  dot={{ fill: '#4de9d8', strokeWidth: 2, r: 3 }}
+                  activeDot={{ r: 5, stroke: '#4de9d8', strokeWidth: 2 }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="clicks" 
+                  stroke="#3b302a" 
+                  strokeWidth={2}
+                  dot={{ fill: '#3b302a', strokeWidth: 2, r: 3 }}
+                  activeDot={{ r: 5, stroke: '#3b302a', strokeWidth: 2 }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="messages" 
+                  stroke="#8b5cf6" 
+                  strokeWidth={2}
+                  dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 3 }}
+                  activeDot={{ r: 5, stroke: '#8b5cf6', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   );

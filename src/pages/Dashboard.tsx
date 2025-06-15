@@ -64,9 +64,9 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
         <Header />
-        <div className="container mx-auto px-4 py-8">
-          <Skeleton className="h-8 w-64 mb-8" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+          <Skeleton className="h-8 w-64 mb-6 sm:mb-8" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-32" />
             ))}
@@ -89,11 +89,11 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <Header />
       
-      <div className="container mx-auto px-4 py-8 space-y-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-6 sm:space-y-8">
         <DashboardHeader />
 
         {/* Verification Alert */}
-        <div className="max-w-4xl mx-auto">
+        <div className="w-full max-w-4xl mx-auto">
           <VerificationAlert 
             isVerified={isVerified}
             hasVerification={hasVerification}
@@ -102,22 +102,30 @@ const Dashboard = () => {
         </div>
 
         {/* KPI Metrics Cards - All Real Data */}
-        <MetricsSection 
-          stats={stats}
-          statsLoading={statsLoading}
-          favoritesCount={favoritesCount}
-          messagesCount={messagesCount}
-          conversionRate={conversionRate}
-        />
+        <div className="w-full">
+          <MetricsSection 
+            stats={stats}
+            statsLoading={statsLoading}
+            favoritesCount={favoritesCount}
+            messagesCount={messagesCount}
+            conversionRate={conversionRate}
+          />
+        </div>
 
         {/* Charts and Insights - Real Data */}
-        <ChartsSection />
+        <div className="w-full">
+          <ChartsSection />
+        </div>
 
         {/* Insights and Actions - Real Data */}
-        <InsightsAndActionsSection />
+        <div className="w-full">
+          <InsightsAndActionsSection />
+        </div>
 
         {/* Quick Action Button for Creating Ads */}
-        <CreateAdSection isVerified={isVerified} />
+        <div className="w-full">
+          <CreateAdSection isVerified={isVerified} />
+        </div>
       </div>
     </div>
   );

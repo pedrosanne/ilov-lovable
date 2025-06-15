@@ -76,13 +76,13 @@ export function TrafficSourceChart() {
   if (isLoading) {
     return (
       <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50/50">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900">
+        <CardHeader className="pb-2 px-3 sm:px-6">
+          <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
             Origem do Tráfego
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Skeleton className="h-[300px]" />
+        <CardContent className="px-3 sm:px-6">
+          <Skeleton className="h-[250px] sm:h-[300px]" />
         </CardContent>
       </Card>
     );
@@ -90,40 +90,46 @@ export function TrafficSourceChart() {
 
   return (
     <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50/50">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-semibold text-gray-900">
+      <CardHeader className="pb-2 px-3 sm:px-6">
+        <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
           Origem do Tráfego
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={trafficData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {trafficData?.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <ChartTooltip 
-                content={<ChartTooltipContent />}
-                formatter={(value: number) => [`${value}%`, 'Porcentagem']}
-              />
-              <Legend 
-                verticalAlign="bottom" 
-                height={36}
-                formatter={(value) => <span className="text-sm text-gray-600">{value}</span>}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+      <CardContent className="px-2 sm:px-6 pb-4">
+        <div className="w-full overflow-hidden">
+          <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                <Pie
+                  data={trafficData}
+                  cx="50%"
+                  cy="45%"
+                  innerRadius={40}
+                  outerRadius={80}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {trafficData?.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <ChartTooltip 
+                  content={<ChartTooltipContent />}
+                  formatter={(value: number) => [`${value}%`, 'Porcentagem']}
+                />
+                <Legend 
+                  verticalAlign="bottom" 
+                  height={36}
+                  formatter={(value) => <span className="text-xs text-gray-600">{value}</span>}
+                  wrapperStyle={{ 
+                    fontSize: '12px',
+                    paddingTop: '10px'
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   );
