@@ -124,7 +124,7 @@ const CreateAd = () => {
         onClear={gamification.clearNewAchievements}
       />
       
-      <div className={`container mx-auto px-4 py-8 ${isMobile ? 'pb-24' : 'max-w-6xl'}`}>
+      <div className={`container mx-auto px-4 py-8 ${isMobile ? 'pb-32' : 'pb-32 max-w-6xl'}`}>
         <VerificationRequired 
           feature="a criação de anúncios"
           description="Para publicar anúncios em nossa plataforma, é necessário verificar sua identidade. Isso garante a segurança e confiabilidade do marketplace."
@@ -147,18 +147,6 @@ const CreateAd = () => {
                   <CurrentStepComponent {...getStepProps()} />
                 </CardContent>
               </Card>
-
-              {!isMobile && (
-                <NavigationButtons
-                  currentStep={currentStep}
-                  totalSteps={steps.length}
-                  isStepValid={isStepValid(currentStep)}
-                  isSubmitting={isSubmitting}
-                  onPrevious={handlePrevious}
-                  onNext={handleNext}
-                  onSubmit={handleSubmit}
-                />
-              )}
             </div>
 
             {!isMobile && (
@@ -174,17 +162,16 @@ const CreateAd = () => {
             )}
           </div>
 
-          {isMobile && (
-            <NavigationButtons
-              currentStep={currentStep}
-              totalSteps={steps.length}
-              isStepValid={isStepValid(currentStep)}
-              isSubmitting={isSubmitting}
-              onPrevious={handlePrevious}
-              onNext={handleNext}
-              onSubmit={handleSubmit}
-            />
-          )}
+          <NavigationButtons
+            currentStep={currentStep}
+            totalSteps={steps.length}
+            isStepValid={isStepValid(currentStep)}
+            isSubmitting={isSubmitting}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            onSubmit={handleSubmit}
+            steps={steps}
+          />
         </VerificationRequired>
       </div>
     </div>
