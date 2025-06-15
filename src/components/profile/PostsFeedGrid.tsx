@@ -72,6 +72,7 @@ export function PostsFeedGrid({ userId, isOwnProfile, viewMode }: PostsFeedGridP
           {posts.map((post) => {
             const mediaUrls = Array.isArray(post.media_urls) ? post.media_urls : [];
             const firstMedia = mediaUrls[0];
+            const firstMediaUrl = typeof firstMedia === 'string' ? firstMedia : String(firstMedia || '');
             
             return (
               <div
@@ -79,17 +80,17 @@ export function PostsFeedGrid({ userId, isOwnProfile, viewMode }: PostsFeedGridP
                 className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer group hover:opacity-90 transition-opacity"
                 onClick={() => setSelectedPost(post)}
               >
-                {firstMedia && (
+                {firstMediaUrl && (
                   <>
                     {post.media_type === 'video' || post.media_type === 'reel' ? (
                       <video
-                        src={firstMedia}
+                        src={firstMediaUrl}
                         className="w-full h-full object-cover"
                         muted
                       />
                     ) : (
                       <img
-                        src={firstMedia}
+                        src={firstMediaUrl}
                         alt="Post"
                         className="w-full h-full object-cover"
                       />
@@ -124,7 +125,7 @@ export function PostsFeedGrid({ userId, isOwnProfile, viewMode }: PostsFeedGridP
                   </>
                 )}
                 
-                {!firstMedia && (
+                {!firstMediaUrl && (
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                     <Camera className="h-8 w-8 text-gray-400" />
                   </div>

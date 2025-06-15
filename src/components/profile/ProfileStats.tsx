@@ -19,20 +19,27 @@ export function ProfileStats({ userId, isOwnProfile }: ProfileStatsProps) {
         .select('likes_count, comments_count')
         .eq('user_id', userId);
 
-      // Buscar visualizações dos anúncios (se for anunciante)
-      const { data: adViews } = await supabase
-        .from('ad_views')
+      // Buscar IDs dos anúncios do usuário
+      const { data: userAds } = await supabase
+        .from('ads')
         .select('id')
-        .in('ad_id', 
-          supabase
-            .from('ads')
-            .select('id')
-            .eq('user_id', userId)
-        );
+        .eq('user_id', userId);
+
+      const adIds = userAds?.map(ad => ad.id) || [];
+
+      // Buscar visualizações dos anúncios se houver anúncios
+      let totalViews = 0;
+      if (adIds.length > 0) {
+        const { data: adViews } = await supabase
+          .from('ad_views')
+          .select('id')
+          .in('ad_id', adIds);
+        
+        totalViews = adViews?.length || 0;
+      }
 
       const totalLikes = postsStats?.reduce((sum, post) => sum + (post.likes_count || 0), 0) || 0;
       const totalComments = postsStats?.reduce((sum, post) => sum + (post.comments_count || 0), 0) || 0;
-      const totalViews = adViews?.length || 0;
 
       return {
         totalLikes,
