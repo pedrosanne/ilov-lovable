@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Eye, Shield, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { useRecordView, useRecordClick } from '@/hooks/useAds';
+import { useRecordView, useRecordClick } from '@/hooks/useAdActions';
 import { IdentityVerificationVideo } from './IdentityVerificationVideo';
 
 interface Ad {

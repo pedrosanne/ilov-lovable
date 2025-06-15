@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, MessageCircle, MapPin, Heart, Eye } from 'lucide-react';
 import { Ad } from '@/types/database';
-import { useRecordClick } from '@/hooks/useAds';
+import { useRecordClick } from '@/hooks/useAdActions';
 import { useVerificationModal } from '@/hooks/useVerificationModal';
 import { VerificationModal } from '@/components/verification/VerificationModal';
 

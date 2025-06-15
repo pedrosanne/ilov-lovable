@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useCreateAd } from '@/hooks/useAds';
+import { useCreateAd } from '@/hooks/useAdActions';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Database } from '@/types/database';
