@@ -1,6 +1,5 @@
 
 import { Sparkles } from 'lucide-react';
-import { XPBar } from '@/components/gamification/XPBar';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface CreateAdHeaderProps {
@@ -32,12 +31,6 @@ export function CreateAdHeader({ xp, level, progress }: CreateAdHeaderProps) {
           Transforme seu perfil em um anúncio incrível! 🚀
         </p>
       </div>
-
-      <XPBar 
-        xp={xp}
-        level={level}
-        progress={progress}
-      />
     </div>
   );
 }
