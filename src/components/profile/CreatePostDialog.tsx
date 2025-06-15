@@ -71,11 +71,8 @@ export function CreatePostDialog({ open, onOpenChange }: CreatePostDialogProps) 
     createPostMutation.mutate();
   };
 
-  const addMediaUrl = () => {
-    const url = prompt('Digite a URL da mídia:');
-    if (url) {
-      setMediaUrls(prev => [...prev, url]);
-    }
+  const addMediaUrl = (url: string) => {
+    setMediaUrls(prev => [...prev, url]);
   };
 
   const removeMediaUrl = (index: number) => {
@@ -84,7 +81,7 @@ export function CreatePostDialog({ open, onOpenChange }: CreatePostDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Criar Novo Post</DialogTitle>
         </DialogHeader>

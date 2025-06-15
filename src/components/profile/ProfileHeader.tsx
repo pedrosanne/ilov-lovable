@@ -56,9 +56,9 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
   return (
     <>
       <Card className="mb-6 overflow-hidden shadow-lg">
-        {/* Cover Image com gradiente melhorado */}
+        {/* Cover Image com gradiente melhorado - aumentando espaçamento */}
         <div 
-          className="h-40 md:h-56 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 relative"
+          className="h-48 md:h-64 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 relative"
           style={{
             backgroundImage: profile.cover_image_url ? `url(${profile.cover_image_url})` : undefined,
             backgroundSize: 'cover',
@@ -86,14 +86,14 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
         </div>
         
         <CardContent className="relative px-4 md:px-8 pb-8">
-          {/* Profile Layout aprimorado */}
+          {/* Profile Layout aprimorado - aumentando margem top */}
           <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row md:items-end md:justify-between">
             {/* Left Section - Avatar e Info */}
             <div className="flex flex-col md:flex-row md:items-end md:space-x-8">
-              {/* Avatar com border animado */}
-              <div className="relative -mt-16 md:-mt-20 mb-6 md:mb-0">
+              {/* Avatar com border animado - aumentando margem negativa */}
+              <div className="relative -mt-20 md:-mt-24 mb-8 md:mb-0">
                 <div className="relative">
-                  <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-white shadow-2xl ring-4 ring-blue-100">
+                  <Avatar className="h-28 w-28 md:h-36 md:w-36 border-4 border-white shadow-2xl ring-4 ring-blue-100">
                     <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
                     <AvatarFallback className="text-xl md:text-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       {getInitials(profile.full_name)}
@@ -105,10 +105,10 @@ export function ProfileHeader({ profile, isOwnProfile, onStartConversation }: Pr
                 </div>
               </div>
               
-              {/* Profile Info melhorada */}
-              <div className="flex-1 md:mb-6">
+              {/* Profile Info melhorada - aumentando margem top */}
+              <div className="flex-1 md:mb-6 mt-4">
                 {/* Name, Verification e Level */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
                   <div className="flex items-center space-x-3">
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                       {profile.presentation_name || profile.full_name}

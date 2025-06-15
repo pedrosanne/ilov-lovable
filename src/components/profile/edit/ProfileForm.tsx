@@ -1,12 +1,14 @@
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { ProfileFormFields } from './ProfileFormFields';
 import { ProfileAvatarUpload } from './ProfileAvatarUpload';
-import { ProfileFormFields, ProfileFormData } from './ProfileFormFields';
+import { ProfileCoverUpload } from './ProfileCoverUpload';
 import { ProfileVoiceAudio } from './ProfileVoiceAudio';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 interface ProfileFormProps {
   profile: any;
@@ -14,37 +16,33 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ profile, onClose }: ProfileFormProps) {
-  const [formData, setFormData] = useState<ProfileFormData>({
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const [formData, setFormData] = useState({
     full_name: profile.full_name || '',
     presentation_name: profile.presentation_name || '',
     bio: profile.bio || '',
-    profession: profile.profession || '',
     location: profile.location || '',
     website: profile.website || '',
     instagram_handle: profile.instagram_handle || '',
     twitter_handle: profile.twitter_handle || '',
+    profession: profile.profession || '',
+    birth_date: profile.birth_date || '',
     phone: profile.phone || '',
-    voice_audio_url: profile.voice_audio_url || null,
+    avatar_url: profile.avatar_url || '',
+    cover_image_url: profile.cover_image_url || '',
+    voice_audio_url: profile.voice_audio_url || '',
   });
-  const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '');
-  const [voiceAudioUrl, setVoiceAudioUrl] = useState(profile.voice_audio_url || null);
-
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: ProfileFormData & { avatar_url?: string }) => {
-      console.log('Atualizando perfil com dados:', data);
-      
+    mutationFn: async () => {
       const { error } = await supabase
         .from('profiles')
-        .update(data)
+        .update(formData)
         .eq('id', profile.id);
 
-      if (error) {
-        console.error('Erro ao atualizar perfil:', error);
-        throw error;
-      }
+      if (error) throw error;
     },
     onSuccess: () => {
       toast({
@@ -54,8 +52,7 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       onClose();
     },
-    onError: (error) => {
-      console.error('Erro na mutação:', error);
+    onError: () => {
       toast({
         title: "Erro",
         description: "Não foi possível atualizar o perfil. Tente novamente.",
@@ -66,62 +63,47 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log('Enviando dados do perfil:', {
-      ...formData,
-      avatar_url: avatarUrl,
-      voice_audio_url: voiceAudioUrl
-    });
-    
-    updateProfileMutation.mutate({ 
-      ...formData, 
-      avatar_url: avatarUrl,
-      voice_audio_url: voiceAudioUrl
-    });
+    updateProfileMutation.mutate();
   };
 
-  const handleFieldChange = (field: keyof ProfileFormData, value: string) => {
+  const updateField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleVoiceAudioChange = (url: string | null) => {
-    console.log('Áudio de voz alterado:', url);
-    setVoiceAudioUrl(url);
-    setFormData(prev => ({ ...prev, voice_audio_url: url }));
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <ProfileAvatarUpload
-        avatarUrl={avatarUrl}
-        fullName={formData.full_name}
-        email={profile.email}
-        onAvatarChange={setAvatarUrl}
+        currentAvatarUrl={formData.avatar_url}
+        onAvatarChange={(url) => updateField('avatar_url', url)}
+        onAvatarRemove={() => updateField('avatar_url', '')}
+      />
+
+      <ProfileCoverUpload
+        currentCoverUrl={formData.cover_image_url}
+        onCoverChange={(url) => updateField('cover_image_url', url)}
+        onCoverRemove={() => updateField('cover_image_url', '')}
       />
 
       <ProfileFormFields
         formData={formData}
-        onFieldChange={handleFieldChange}
+        onFieldChange={updateField}
       />
 
       <ProfileVoiceAudio
-        voiceAudioUrl={voiceAudioUrl}
-        onAudioChange={handleVoiceAudioChange}
+        currentVoiceUrl={formData.voice_audio_url}
+        onVoiceChange={(url) => updateField('voice_audio_url', url)}
+        onVoiceRemove={() => updateField('voice_audio_url', '')}
       />
 
-      <div className="flex justify-end space-x-2 pt-4">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={onClose}
-        >
+      <div className="flex justify-end space-x-3 pt-4">
+        <Button type="button" variant="outline" onClick={onClose}>
           Cancelar
         </Button>
-        <Button 
-          type="submit"
-          disabled={updateProfileMutation.isPending}
-        >
-          {updateProfileMutation.isPending ? 'Salvando...' : 'Salvar'}
+        <Button type="submit" disabled={updateProfileMutation.isPending}>
+          {updateProfileMutation.isPending && (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          )}
+          Salvar
         </Button>
       </div>
     </form>
