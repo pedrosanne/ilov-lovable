@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateAd from "./pages/CreateAd";
 import NotFound from "./pages/NotFound";
 import MyAds from "./pages/MyAds";
+import EditAd from "./pages/EditAd";
 import Messages from "./pages/Messages";
 import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create-ad" element={<CreateAd />} />
             <Route path="/my-ads" element={<MyAds />} />
+            <Route path="/edit-ad/:id" element={<EditAd />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/profile/:userId?" element={<Profile />} />

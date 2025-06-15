@@ -41,9 +41,12 @@ export function AdActions({ adId, isLoading }: AdActionsProps) {
         size="sm" 
         disabled={isLoading}
         className="flex-1 sm:flex-none"
+        asChild
       >
-        <Edit3 className="h-4 w-4 sm:mr-1" />
-        <span className="hidden sm:inline">Editar</span>
+        <Link to={`/edit-ad/${adId}`}>
+          <Edit3 className="h-4 w-4 sm:mr-1" />
+          <span className="hidden sm:inline">Editar</span>
+        </Link>
       </Button>
       
       <AlertDialog>
