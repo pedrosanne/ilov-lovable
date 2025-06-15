@@ -8,7 +8,7 @@ export const isStepValid = (step: number, formData: AdFormDataV2): boolean => {
     case 2:
       return !!(formData.services_offered.length > 0 && formData.location);
     case 3:
-      return formData.hourly_rate > 0;
+      return !!(formData.hourly_rate && formData.hourly_rate > 0);
     case 4:
       return true; // Optional step
     case 5:

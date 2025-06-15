@@ -4,7 +4,7 @@ import { AdFormDataV2 } from '@/types/adFormV2';
 export const calculateCompletionPercentage = (formData: AdFormDataV2): number => {
   const requiredFields = [
     'presentation_name', 'age', 'gender', 'title', 'description',
-    'services_offered', 'location', 'price', 'whatsapp',
+    'services_offered', 'location', 'hourly_rate', 'whatsapp',
     'terms_accepted', 'age_confirmed', 'image_consent'
   ];
   

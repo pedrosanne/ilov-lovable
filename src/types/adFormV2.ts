@@ -31,6 +31,7 @@ export interface AdFormDataV2 {
   accepts_travel: boolean;
 
   // Preços
+  price: number | null; // Adicionado de volta
   hourly_rate: number | null;
   packages: {
     name: string;
@@ -76,3 +77,75 @@ export interface AdFormDataV2 {
   description: string;
   location: string;
 }
+
+export const initialFormData: AdFormDataV2 = {
+  // Dados pessoais
+  presentation_name: '',
+  age: null,
+  gender: '',
+  ethnicity: '',
+  height: null,
+  weight: null,
+  body_type: '',
+  languages: [],
+
+  // Frase de destaque
+  highlight_phrase: '',
+
+  // Serviços
+  services_offered: [],
+  target_audience: [],
+  service_locations: [],
+
+  // Disponibilidade
+  availability_days: [],
+  availability_hours: {},
+  appointment_only: false,
+
+  // Localização
+  neighborhood: '',
+  postal_code: '',
+  accepts_travel: false,
+
+  // Preços
+  price: null,
+  hourly_rate: null,
+  packages: [],
+
+  // Métodos de pagamento
+  payment_methods: [],
+
+  // Mídia
+  photos: [],
+  videos: [],
+
+  // Contatos
+  whatsapp: '',
+  contact_telegram: '',
+  contact_instagram: '',
+  contact_email: '',
+  contact_other: '',
+
+  // Preferências e extras
+  accepts_last_minute: false,
+  restrictions: '',
+  personal_rules: '',
+  favorite_fragrance: '',
+  favorite_drink: '',
+  preferred_gifts: '',
+  favorite_music: '',
+
+  // Pacote de destaque
+  highlight_package: 'basic',
+
+  // Termos
+  terms_accepted: false,
+  age_confirmed: false,
+  image_consent: false,
+
+  // Categorias e outros
+  category: 'acompanhante',
+  title: '',
+  description: '',
+  location: '',
+};
