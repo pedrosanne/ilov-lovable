@@ -73,9 +73,10 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <ProfileAvatarUpload
-        currentAvatarUrl={formData.avatar_url}
+        avatarUrl={formData.avatar_url}
+        fullName={formData.full_name}
+        email={profile.email}
         onAvatarChange={(url) => updateField('avatar_url', url)}
-        onAvatarRemove={() => updateField('avatar_url', '')}
       />
 
       <ProfileCoverUpload
@@ -90,9 +91,8 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
       />
 
       <ProfileVoiceAudio
-        currentVoiceUrl={formData.voice_audio_url}
-        onVoiceChange={(url) => updateField('voice_audio_url', url)}
-        onVoiceRemove={() => updateField('voice_audio_url', '')}
+        voiceAudioUrl={formData.voice_audio_url}
+        onAudioChange={(url) => updateField('voice_audio_url', url || '')}
       />
 
       <div className="flex justify-end space-x-3 pt-4">
