@@ -97,6 +97,7 @@ export type Database = {
         Row: {
           accepts_last_minute: boolean | null
           accepts_travel: boolean | null
+          admin_notes: string | null
           age: number | null
           age_confirmed: boolean | null
           appointment_only: boolean | null
@@ -154,6 +155,7 @@ export type Database = {
         Insert: {
           accepts_last_minute?: boolean | null
           accepts_travel?: boolean | null
+          admin_notes?: string | null
           age?: number | null
           age_confirmed?: boolean | null
           appointment_only?: boolean | null
@@ -211,6 +213,7 @@ export type Database = {
         Update: {
           accepts_last_minute?: boolean | null
           accepts_travel?: boolean | null
+          admin_notes?: string | null
           age?: number | null
           age_confirmed?: boolean | null
           appointment_only?: boolean | null
