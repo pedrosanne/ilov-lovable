@@ -1,3 +1,4 @@
+
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -128,10 +129,10 @@ const AdDetails = () => {
               </CardContent>
             </Card>
 
-            {/* Audio Player */}
-            {ad.profiles?.voice_audio_url && (
+            {/* Audio Player - using voice_audio_url from ads table, not profiles */}
+            {ad.voice_audio_url && (
               <AudioPlayer 
-                audioUrl={ad.profiles.voice_audio_url}
+                audioUrl={ad.voice_audio_url}
                 title={ad.title}
                 providerName={ad.profiles?.presentation_name || ad.profiles?.full_name || 'Prestador'}
               />
@@ -230,10 +231,9 @@ const AdDetails = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <Button 
-                  className="w-full" 
                   size="lg"
                   onClick={handleWhatsAppClick}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
                 >
                   <MessageCircle className="h-5 w-5 mr-2" />
                   Entrar em Contato via WhatsApp
