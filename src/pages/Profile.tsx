@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { StoriesRow } from '@/components/profile/StoriesRow';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
@@ -66,26 +67,28 @@ const Profile = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="flex-1 container mx-auto px-4 py-8">
           <Skeleton className="h-64 w-full mb-4" />
           <Skeleton className="h-32 w-full mb-4" />
           <Skeleton className="h-96 w-full" />
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="flex-1 container mx-auto px-4 py-8">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Perfil não encontrado</h2>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -128,10 +131,10 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         <ProfileHeader 
           profile={profile} 
           isOwnProfile={isOwnProfile}
@@ -188,6 +191,8 @@ const Profile = () => {
         onOpenChange={closeModal}
         actionType="mensagens"
       />
+      
+      <Footer />
     </div>
   );
 };

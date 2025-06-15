@@ -1,9 +1,9 @@
-
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { Star, MessageCircle, MapPin, ArrowLeft, Heart, Share2, Eye } from 'lucide-react';
 import { useAd } from '@/hooks/useAds';
 import { useRecordView, useRecordClick } from '@/hooks/useAdActions';
@@ -48,9 +48,9 @@ const AdDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="flex-1 container mx-auto px-4 py-8">
           <Skeleton className="h-8 w-48 mb-6" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
@@ -63,15 +63,16 @@ const AdDetails = () => {
             </div>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (error || !ad) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="flex-1 container mx-auto px-4 py-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">
               Anúncio não encontrado
@@ -81,15 +82,16 @@ const AdDetails = () => {
             </Button>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-6">
           <Button variant="ghost" asChild>
             <Link to="/">
@@ -220,6 +222,8 @@ const AdDetails = () => {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
