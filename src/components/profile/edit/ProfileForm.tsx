@@ -37,12 +37,33 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
 
   const updateProfileMutation = useMutation({
     mutationFn: async () => {
+      // Preparar dados para o update, convertendo strings vazias para null quando necessário
+      const updateData = {
+        ...formData,
+        birth_date: formData.birth_date.trim() === '' ? null : formData.birth_date,
+        website: formData.website.trim() === '' ? null : formData.website,
+        instagram_handle: formData.instagram_handle.trim() === '' ? null : formData.instagram_handle,
+        twitter_handle: formData.twitter_handle.trim() === '' ? null : formData.twitter_handle,
+        profession: formData.profession.trim() === '' ? null : formData.profession,
+        phone: formData.phone.trim() === '' ? null : formData.phone,
+        bio: formData.bio.trim() === '' ? null : formData.bio,
+        location: formData.location.trim() === '' ? null : formData.location,
+        avatar_url: formData.avatar_url.trim() === '' ? null : formData.avatar_url,
+        cover_image_url: formData.cover_image_url.trim() === '' ? null : formData.cover_image_url,
+        voice_audio_url: formData.voice_audio_url.trim() === '' ? null : formData.voice_audio_url,
+      };
+
+      console.log('Dados sendo enviados para atualização:', updateData);
+
       const { error } = await supabase
         .from('profiles')
-        .update(formData)
+        .update(updateData)
         .eq('id', profile.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao atualizar perfil:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       toast({
@@ -52,7 +73,8 @@ export function ProfileForm({ profile, onClose }: ProfileFormProps) {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       onClose();
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Erro na mutação:', error);
       toast({
         title: "Erro",
         description: "Não foi possível atualizar o perfil. Tente novamente.",
