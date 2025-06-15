@@ -31,7 +31,13 @@ export function AudioRecorder({ onRecordingComplete, onFileUpload }: AudioRecord
   };
 
   const handleStartRecording = () => {
+    console.log('Botão de gravar clicado');
     startRecording(onRecordingComplete);
+  };
+
+  const handleStopRecording = () => {
+    console.log('Botão de parar clicado');
+    stopRecording();
   };
 
   return (
@@ -59,7 +65,7 @@ export function AudioRecorder({ onRecordingComplete, onFileUpload }: AudioRecord
       <div className="space-y-4">
         <Button
           type="button"
-          onClick={isRecording ? stopRecording : handleStartRecording}
+          onClick={isRecording ? handleStopRecording : handleStartRecording}
           className={`w-full py-6 text-lg ${
             isRecording 
               ? 'bg-red-500 hover:bg-red-600' 

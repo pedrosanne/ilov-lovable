@@ -21,6 +21,7 @@ export function AudioPlayer({ audioUrl, onDelete }: AudioPlayerProps) {
   } = useAudioPlayback();
 
   const handlePlay = () => {
+    console.log('Botão de reproduzir clicado, URL:', audioUrl);
     playAudio(audioUrl);
   };
 

@@ -41,6 +41,8 @@ export function useAudioRecording() {
 
   const startRecording = useCallback(async (onRecordingComplete: (file: File, url: string) => void) => {
     try {
+      console.log('Solicitando acesso ao microfone...');
+      
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
@@ -49,80 +51,141 @@ export function useAudioRecording() {
         }
       });
       
+      console.log('Acesso ao microfone concedido');
       streamRef.current = stream;
       
+      // Configurar AudioContext para análise
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       const source = audioContextRef.current.createMediaStreamSource(stream);
       analyserRef.current = audioContextRef.current.createAnalyser();
       analyserRef.current.fftSize = 256;
+      analyserRef.current.smoothingTimeConstant = 0.8;
       source.connect(analyserRef.current);
-
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
       
+      console.log('AudioContext configurado');
+
+      // Configurar MediaRecorder
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+        ? 'audio/webm;codecs=opus' 
+        : MediaRecorder.isTypeSupported('audio/webm') 
+        ? 'audio/webm' 
+        : 'audio/mp4';
+      
+      console.log('Usando MIME type:', mimeType);
+      
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
       
       mediaRecorder.ondataavailable = (event) => {
+        console.log('Dados de áudio disponíveis:', event.data.size);
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
         }
       };
       
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const audioFile = new File([audioBlob], 'voice_presentation.webm', { type: 'audio/webm' });
+        console.log('Gravação finalizada, processando áudio...');
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        const audioFile = new File([audioBlob], `voice_${Date.now()}.webm`, { type: mimeType });
         const audioUrl = URL.createObjectURL(audioBlob);
         
+        console.log('Arquivo de áudio criado:', audioFile.size, 'bytes');
         onRecordingComplete(audioFile, audioUrl);
         
-        stream.getTracks().forEach(track => track.stop());
-        if (audioContextRef.current) {
+        // Cleanup
+        stream.getTracks().forEach(track => {
+          track.stop();
+          console.log('Track parado:', track.kind);
+        });
+        
+        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
           audioContextRef.current.close();
         }
       };
       
-      mediaRecorder.start(100);
+      mediaRecorder.onerror = (event) => {
+        console.error('Erro no MediaRecorder:', event);
+      };
+      
+      // Iniciar gravação
+      mediaRecorder.start(100); // Capturar dados a cada 100ms
       setIsRecording(true);
       setRecordingTime(0);
       
+      console.log('Gravação iniciada');
+      
+      // Iniciar visualização
       updateAudioLevels();
       
+      // Timer de gravação
       intervalRef.current = setInterval(() => {
         setRecordingTime(prev => {
-          if (prev >= 60) {
+          const newTime = prev + 1;
+          if (newTime >= 60) {
+            console.log('Tempo limite atingido, parando gravação');
             stopRecording();
             return 60;
           }
-          return prev + 1;
+          return newTime;
         });
       }, 1000);
       
     } catch (error) {
-      console.error('Erro ao acessar microfone:', error);
-      alert('Erro ao acessar o microfone. Verifique as permissões.');
+      console.error('Erro ao inicializar gravação:', error);
+      setIsRecording(false);
+      
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          alert('Permissão de microfone negada. Por favor, permita o acesso ao microfone.');
+        } else if (error.name === 'NotFoundError') {
+          alert('Microfone não encontrado. Verifique se há um microfone conectado.');
+        } else {
+          alert(`Erro ao acessar microfone: ${error.message}`);
+        }
+      } else {
+        alert('Erro desconhecido ao acessar o microfone.');
+      }
     }
   }, [updateAudioLevels]);
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && isRecording) {
+    console.log('Parando gravação...');
+    
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      setAudioLevels(new Array(20).fill(0));
     }
-  }, [isRecording]);
+    
+    setIsRecording(false);
+    
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+    
+    setAudioLevels(new Array(20).fill(0));
+  }, []);
 
   const cleanup = useCallback(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    if (audioContextRef.current) audioContextRef.current.close();
+    console.log('Limpando recursos de gravação...');
+    
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+    
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      audioContextRef.current.close();
+    }
+    
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
