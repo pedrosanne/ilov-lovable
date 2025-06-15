@@ -3,6 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Database } from '@/integrations/supabase/types';
+
+type CategoryType = Database['public']['Enums']['category_type'];
 
 interface UpdateAdData {
   id: string;
@@ -12,7 +15,7 @@ interface UpdateAdData {
     price: number | null;
     location: string;
     whatsapp: string;
-    category: string;
+    category: CategoryType;
   };
 }
 
