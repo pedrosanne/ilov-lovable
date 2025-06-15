@@ -1,7 +1,7 @@
 
 import { Header } from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
-import { useAdStats } from '@/hooks/useAds';
+import { useAdStats } from '@/hooks/useAdStats';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 import { Navigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
