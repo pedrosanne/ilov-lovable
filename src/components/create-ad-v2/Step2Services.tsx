@@ -73,9 +73,14 @@ export function Step2Services({ formData, updateFormData }: Step2ServicesProps) 
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="acompanhante">Acompanhante</SelectItem>
-            <SelectItem value="massagista">Massagista</SelectItem>
-            <SelectItem value="modelo">Modelo</SelectItem>
-            <SelectItem value="dançarina">Dançarina</SelectItem>
+            <SelectItem value="beleza">Beleza</SelectItem>
+            <SelectItem value="saude">Saúde</SelectItem>
+            <SelectItem value="casa">Casa e Jardim</SelectItem>
+            <SelectItem value="tecnologia">Tecnologia</SelectItem>
+            <SelectItem value="educacao">Educação</SelectItem>
+            <SelectItem value="servicos_gerais">Serviços Gerais</SelectItem>
+            <SelectItem value="consultoria">Consultoria</SelectItem>
+            <SelectItem value="eventos">Eventos</SelectItem>
           </SelectContent>
         </Select>
       </div>
