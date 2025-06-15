@@ -96,3 +96,20 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Animação do coração */
+@keyframes heart-draw {
+  0% {
+    stroke-dashoffset: 200;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -200;
+  }
+}
+
+.animate-heart-draw {
+  animation: heart-draw 3s ease-in-out infinite;
+}
