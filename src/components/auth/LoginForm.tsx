@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
 import { useNavigate } from 'react-router-dom';
+import { HeartPreloader } from '@/components/ui/heart-preloader';
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,36 +43,44 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
+        <Alert variant="destructive" className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">{error}</AlertDescription>
         </Alert>
       )}
       
       <div className="space-y-2">
-        <Label htmlFor="email">E-mail</Label>
+        <Label htmlFor="email" className="text-gray-700 font-medium">E-mail</Label>
         <Input
           id="email"
           type="email"
           placeholder="seu@email.com"
           {...register('email')}
-          className={errors.email ? 'border-red-500' : ''}
+          className={`transition-all duration-200 ${
+            errors.email 
+              ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+              : 'border-gray-200 focus:border-teal-400 focus:ring-teal-100'
+          }`}
         />
         {errors.email && (
-          <p className="text-sm text-red-500">{errors.email.message}</p>
+          <p className="text-sm text-red-500 animate-fade-in">{errors.email.message}</p>
         )}
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="password">Senha</Label>
+        <Label htmlFor="password" className="text-gray-700 font-medium">Senha</Label>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
             placeholder="Sua senha"
             {...register('password')}
-            className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+            className={`pr-12 transition-all duration-200 ${
+              errors.password 
+                ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+                : 'border-gray-200 focus:border-teal-400 focus:ring-teal-100'
+            }`}
           />
           <Button
             type="button"
@@ -81,23 +90,27 @@ export function LoginForm() {
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
-              <EyeOff className="h-4 w-4 text-gray-400" />
+              <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors" />
             ) : (
-              <Eye className="h-4 w-4 text-gray-400" />
+              <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors" />
             )}
           </Button>
         </div>
         {errors.password && (
-          <p className="text-sm text-red-500">{errors.password.message}</p>
+          <p className="text-sm text-red-500 animate-fade-in">{errors.password.message}</p>
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button 
+        type="submit" 
+        className="w-full h-12 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]" 
+        disabled={isLoading}
+      >
         {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <div className="flex items-center justify-center">
+            <HeartPreloader size={24} className="mr-2" />
             Entrando...
-          </>
+          </div>
         ) : (
           'Entrar'
         )}
