@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Heart, MessageCircle, Share, MoreHorizontal, Play } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Heart, MessageCircle, Share, MoreHorizontal, Play, Trash2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CommentsSection } from './CommentsSection';
+import { useToast } from '@/hooks/use-toast';
 
 interface PostCardProps {
   post: any;
@@ -17,6 +19,7 @@ interface PostCardProps {
 
 export function PostCard({ post, isOwnProfile, onUpdate }: PostCardProps) {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [showComments, setShowComments] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 
@@ -62,6 +65,72 @@ export function PostCard({ post, isOwnProfile, onUpdate }: PostCardProps) {
     },
   });
 
+  const deletePostMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from('profile_posts')
+        .delete()
+        .eq('id', post.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Post excluído",
+        description: "Seu post foi excluído com sucesso.",
+      });
+      onUpdate();
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao excluir post",
+        description: "Não foi possível excluir o post. Tente novamente.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleShare = async () => {
+    const postUrl = `${window.location.origin}/profile/${post.user_id}`;
+    const shareText = `Confira este post: ${post.content || 'Post interessante'}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Compartilhar Post',
+          text: shareText,
+          url: postUrl,
+        });
+      } catch (error) {
+        // Fallback se o usuário cancelar o compartilhamento
+        copyToClipboard(postUrl);
+      }
+    } else {
+      copyToClipboard(postUrl);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast({
+        title: "Link copiado!",
+        description: "O link do post foi copiado para a área de transferência.",
+      });
+    }).catch(() => {
+      toast({
+        title: "Erro ao copiar",
+        description: "Não foi possível copiar o link. Tente novamente.",
+        variant: "destructive",
+      });
+    });
+  };
+
+  const handleDeletePost = () => {
+    if (window.confirm('Tem certeza que deseja excluir este post?')) {
+      deletePostMutation.mutate();
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Intl.RelativeTimeFormat('pt-BR').format(
       Math.floor((new Date(dateString).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
@@ -93,9 +162,30 @@ export function PostCard({ post, isOwnProfile, onUpdate }: PostCardProps) {
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="sm">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          
+          {/* Menu de três pontos */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleShare}>
+                <Share className="h-4 w-4 mr-2" />
+                Compartilhar
+              </DropdownMenuItem>
+              {isOwnProfile && (
+                <DropdownMenuItem 
+                  onClick={handleDeletePost}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Excluir
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
 
@@ -178,7 +268,11 @@ export function PostCard({ post, isOwnProfile, onUpdate }: PostCardProps) {
                 {post.comments_count || 0}
               </Button>
               
-              <Button variant="ghost" size="sm">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={handleShare}
+              >
                 <Share className="h-5 w-5" />
               </Button>
             </div>
