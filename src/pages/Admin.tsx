@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -61,12 +62,12 @@ const Admin = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">Dashboard</TabsTrigger>
-            <TabsTrigger value="ads">Anúncios</TabsTrigger>
-            <TabsTrigger value="documents">Documentos</TabsTrigger>
-            <TabsTrigger value="upgrades">Upgrades</TabsTrigger>
-            <TabsTrigger value="verifications">Verificações</TabsTrigger>
+          <TabsList className="w-full overflow-x-auto scrollbar-hide grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 min-w-fit">
+            <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap">Dashboard</TabsTrigger>
+            <TabsTrigger value="ads" className="text-xs sm:text-sm whitespace-nowrap">Anúncios</TabsTrigger>
+            <TabsTrigger value="documents" className="text-xs sm:text-sm whitespace-nowrap">Documentos</TabsTrigger>
+            <TabsTrigger value="upgrades" className="text-xs sm:text-sm whitespace-nowrap">Upgrades</TabsTrigger>
+            <TabsTrigger value="verifications" className="text-xs sm:text-sm whitespace-nowrap">Verificações</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
