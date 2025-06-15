@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -62,47 +61,59 @@ const Admin = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="w-full overflow-x-auto scrollbar-hide grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 min-w-fit">
-            <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap">Dashboard</TabsTrigger>
-            <TabsTrigger value="ads" className="text-xs sm:text-sm whitespace-nowrap">Anúncios</TabsTrigger>
-            <TabsTrigger value="documents" className="text-xs sm:text-sm whitespace-nowrap">Documentos</TabsTrigger>
-            <TabsTrigger value="upgrades" className="text-xs sm:text-sm whitespace-nowrap">Upgrades</TabsTrigger>
-            <TabsTrigger value="verifications" className="text-xs sm:text-sm whitespace-nowrap">Verificações</TabsTrigger>
-          </TabsList>
+          <div className="w-full overflow-x-auto scrollbar-hide">
+            <TabsList className="w-full flex min-w-max">
+              <TabsTrigger value="overview" className="flex-1 min-w-0 text-xs sm:text-sm px-2 sm:px-3">
+                Dashboard
+              </TabsTrigger>
+              <TabsTrigger value="ads" className="flex-1 min-w-0 text-xs sm:text-sm px-2 sm:px-3">
+                Anúncios
+              </TabsTrigger>
+              <TabsTrigger value="documents" className="flex-1 min-w-0 text-xs sm:text-sm px-2 sm:px-3">
+                Documentos
+              </TabsTrigger>
+              <TabsTrigger value="upgrades" className="flex-1 min-w-0 text-xs sm:text-sm px-2 sm:px-3">
+                Upgrades
+              </TabsTrigger>
+              <TabsTrigger value="verifications" className="flex-1 min-w-0 text-xs sm:text-sm px-2 sm:px-3">
+                Verificações
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="overview" className="space-y-6">
             {/* Estatísticas Básicas - Layout mais compacto */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-muted-foreground">Total de Usuários</span>
-                  <Users className="h-4 w-4 text-muted-foreground" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Card className="p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-medium text-muted-foreground">Total de Usuários</span>
+                  <Users className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
+                <div className="text-xl font-bold">{stats?.totalUsers || 0}</div>
               </Card>
 
-              <Card className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-muted-foreground">Anúncios Pendentes</span>
-                  <AlertCircle className="h-4 w-4 text-muted-foreground" />
+              <Card className="p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-medium text-muted-foreground">Anúncios Pendentes</span>
+                  <AlertCircle className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <div className="text-2xl font-bold text-orange-600">{stats?.pendingAds || 0}</div>
+                <div className="text-xl font-bold text-orange-600">{stats?.pendingAds || 0}</div>
               </Card>
 
-              <Card className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-muted-foreground">Anúncios Ativos</span>
-                  <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <Card className="p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-medium text-muted-foreground">Anúncios Ativos</span>
+                  <CheckCircle className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <div className="text-2xl font-bold text-green-600">{stats?.activeAds || 0}</div>
+                <div className="text-xl font-bold text-green-600">{stats?.activeAds || 0}</div>
               </Card>
 
-              <Card className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-muted-foreground">Upgrades Pendentes</span>
-                  <Shield className="h-4 w-4 text-muted-foreground" />
+              <Card className="p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-medium text-muted-foreground">Upgrades Pendentes</span>
+                  <Shield className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <div className="text-2xl font-bold text-blue-600">{stats?.pendingUpgrades || 0}</div>
+                <div className="text-xl font-bold text-blue-600">{stats?.pendingUpgrades || 0}</div>
               </Card>
             </div>
 
