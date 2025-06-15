@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Camera, Edit3, Eye, Zap } from 'lucide-react';
+import { Camera, FileText, Eye, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function QuickActions() {
@@ -32,8 +32,8 @@ export function QuickActions() {
           asChild
         >
           <Link to="/my-ads">
-            <Edit3 className="h-4 w-4 mr-3" />
-            Editar Descrição
+            <FileText className="h-4 w-4 mr-3" />
+            Meus Anúncios
           </Link>
         </Button>
         
