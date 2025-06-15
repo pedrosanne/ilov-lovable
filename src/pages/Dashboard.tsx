@@ -1,5 +1,6 @@
 
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdStats } from '@/hooks/useAdStats';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
@@ -62,9 +63,9 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
         <Header />
-        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="flex-1 container mx-auto px-3 sm:px-4 py-4 sm:py-8">
           <Skeleton className="h-8 w-64 mb-6 sm:mb-8" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -72,6 +73,7 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -86,10 +88,10 @@ const Dashboard = () => {
     : '0';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col">
       <Header />
       
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-6 sm:space-y-8">
+      <main className="flex-1 container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-6 sm:space-y-8">
         <DashboardHeader />
 
         {/* Verification Alert */}
@@ -126,7 +128,9 @@ const Dashboard = () => {
         <div className="w-full">
           <CreateAdSection isVerified={isVerified} />
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };

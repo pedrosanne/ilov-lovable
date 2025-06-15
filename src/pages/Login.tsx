@@ -3,15 +3,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { Heart } from 'lucide-react';
 import { LoginForm } from '@/components/auth/LoginForm';
 
 const Login = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex flex-col">
       <Header />
       
-      <div className="container mx-auto px-4 py-12">
+      <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <Heart className="h-16 w-16 text-red-500 mx-auto mb-4" />
@@ -59,7 +60,9 @@ const Login = () => {
             </p>
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };

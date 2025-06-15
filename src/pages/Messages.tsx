@@ -1,5 +1,6 @@
 
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { MessagesSystem } from '@/components/messages/MessagesSystem';
 import { VerificationRequired } from '@/components/verification/VerificationRequired';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,16 +12,17 @@ const Messages = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 py-8">
           <Skeleton className="h-8 w-64 mb-8" />
           <div className="grid gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
               <Skeleton key={i} className="h-32" />
             ))}
           </div>
-        </div>
+        </main>
+        <Footer />
       </div>
     );
   }
@@ -30,10 +32,10 @@ const Messages = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
         <VerificationRequired
           feature="o sistema de mensagens"
           description="Para trocar mensagens com outros usuários, é necessário verificar sua identidade. Isso garante um ambiente seguro e confiável para todos."
@@ -51,7 +53,9 @@ const Messages = () => {
             <MessagesSystem />
           </div>
         </VerificationRequired>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };

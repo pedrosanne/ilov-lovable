@@ -1,5 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -45,14 +47,15 @@ const CreateAd = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 py-8">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
             <div className="h-4 bg-gray-200 rounded w-1/2"></div>
           </div>
-        </div>
+        </main>
+        <Footer />
       </div>
     );
   }
@@ -115,7 +118,7 @@ const CreateAd = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col">
       <Header />
       
       <AchievementNotification 
@@ -123,7 +126,7 @@ const CreateAd = () => {
         onClear={gamification.clearNewAchievements}
       />
       
-      <div className={`container mx-auto px-4 py-8 ${isMobile ? 'pb-32' : 'pb-32 max-w-6xl'}`}>
+      <main className={`flex-1 container mx-auto px-4 py-8 ${isMobile ? 'pb-32' : 'pb-32 max-w-6xl'}`}>
         <VerificationRequired 
           feature="a criação de anúncios"
           description="Para publicar anúncios em nossa plataforma, é necessário verificar sua identidade. Isso garante a segurança e confiabilidade do marketplace."
@@ -167,7 +170,9 @@ const CreateAd = () => {
             steps={steps}
           />
         </VerificationRequired>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };

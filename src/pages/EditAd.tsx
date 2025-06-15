@@ -1,6 +1,7 @@
 
 import { useParams, Navigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useAd } from '@/hooks/useAds';
 import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,12 +16,13 @@ const EditAd = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 py-8">
           <Skeleton className="h-8 w-64 mb-8" />
           <Skeleton className="h-96 w-full" />
-        </div>
+        </main>
+        <Footer />
       </div>
     );
   }
@@ -31,52 +33,55 @@ const EditAd = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 py-8">
           <Skeleton className="h-8 w-64 mb-8" />
           <Skeleton className="h-96 w-full" />
-        </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   if (error || !ad) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 py-8">
           <Alert className="border-red-200 bg-red-50">
             <AlertTriangle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-800">
               Anúncio não encontrado ou você não tem permissão para editá-lo.
             </AlertDescription>
           </Alert>
-        </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   if (ad.user_id !== user.id) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 py-8">
           <Alert className="border-red-200 bg-red-50">
             <AlertTriangle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-800">
               Você não tem permissão para editar este anúncio.
             </AlertDescription>
           </Alert>
-        </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             Editar Anúncio
@@ -87,7 +92,8 @@ const EditAd = () => {
         </div>
         
         <EditAdForm ad={ad} />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };
