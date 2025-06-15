@@ -10,16 +10,12 @@ export function DetailedStats() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {Array.from({ length: 8 }).map((_, i) => (
-          <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-6 w-24" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-8 w-16 mb-2" />
-              <Skeleton className="h-4 w-20" />
-            </CardContent>
+          <Card key={i} className="p-3">
+            <Skeleton className="h-4 w-20 mb-2" />
+            <Skeleton className="h-6 w-12 mb-1" />
+            <Skeleton className="h-3 w-16" />
           </Card>
         ))}
       </div>
@@ -35,146 +31,128 @@ export function DetailedStats() {
 
   const getApprovalRateIcon = (rate: string) => {
     const numRate = parseFloat(rate);
-    if (numRate >= 70) return <TrendingUp className="h-4 w-4 text-green-600" />;
-    return <TrendingDown className="h-4 w-4 text-red-600" />;
+    if (numRate >= 70) return <TrendingUp className="h-3 w-3 text-green-600" />;
+    return <TrendingDown className="h-3 w-3 text-red-600" />;
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <h3 className="text-lg font-semibold text-gray-900">Estatísticas Detalhadas</h3>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {/* Taxa de Aprovação de Anúncios */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Aprovação</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2">
-              <div className={`text-2xl font-bold ${getApprovalRateColor(stats?.ads.approvalRate || '0%')}`}>
-                {stats?.ads.approvalRate}
-              </div>
-              {getApprovalRateIcon(stats?.ads.approvalRate || '0%')}
+        <Card className="p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Taxa de Aprovação</span>
+            <CheckCircle2 className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="flex items-center space-x-1">
+            <div className={`text-lg font-bold ${getApprovalRateColor(stats?.ads.approvalRate || '0%')}`}>
+              {stats?.ads.approvalRate}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {stats?.ads.active} de {stats?.ads.total} anúncios
-            </p>
-          </CardContent>
+            {getApprovalRateIcon(stats?.ads.approvalRate || '0%')}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {stats?.ads.active} de {stats?.ads.total}
+          </p>
         </Card>
 
         {/* Anúncios Pendentes */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Anúncios Pendentes</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {stats?.ads.pending}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Aguardando análise
-            </p>
-          </CardContent>
+        <Card className="p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Anúncios Pendentes</span>
+            <AlertCircle className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="text-lg font-bold text-orange-600">
+            {stats?.ads.pending}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Aguardando análise
+          </p>
         </Card>
 
         {/* Taxa de Verificação */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Verificação</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className={`text-2xl font-bold ${getApprovalRateColor(stats?.verifications.approvalRate || '0%')}`}>
-              {stats?.verifications.approvalRate}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {stats?.verifications.approved} verificações aprovadas
-            </p>
-          </CardContent>
+        <Card className="p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Taxa de Verificação</span>
+            <Shield className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className={`text-lg font-bold ${getApprovalRateColor(stats?.verifications.approvalRate || '0%')}`}>
+            {stats?.verifications.approvalRate}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {stats?.verifications.approved} aprovadas
+          </p>
         </Card>
 
         {/* Tempo Médio de Análise */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tempo Médio</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats?.verifications.avgReviewTimeHours}h
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Para análise de verificações
-            </p>
-          </CardContent>
+        <Card className="p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Tempo Médio</span>
+            <Clock className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="text-lg font-bold">
+            {stats?.verifications.avgReviewTimeHours}h
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Para análise
+          </p>
         </Card>
 
         {/* Total de Usuários */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats?.users.total}
-            </div>
-            <div className="flex items-center space-x-1 mt-1">
-              <Badge variant="outline" className="text-xs">
-                {stats?.users.verified} verificados
-              </Badge>
-            </div>
-          </CardContent>
+        <Card className="p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Total Usuários</span>
+            <Users className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="text-lg font-bold">
+            {stats?.users.total}
+          </div>
+          <Badge variant="outline" className="text-xs px-1 py-0">
+            {stats?.users.verified} verificados
+          </Badge>
         </Card>
 
         {/* Anunciantes */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Anunciantes</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {stats?.users.providers}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {stats?.users.providerRate} do total
-            </p>
-          </CardContent>
+        <Card className="p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Anunciantes</span>
+            <Users className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="text-lg font-bold text-blue-600">
+            {stats?.users.providers}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {stats?.users.providerRate}
+          </p>
         </Card>
 
         {/* Verificações Pendentes */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Verificações Pendentes</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {stats?.verifications.pending}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Aguardando análise
-            </p>
-          </CardContent>
+        <Card className="p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Verif. Pendentes</span>
+            <AlertCircle className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="text-lg font-bold text-orange-600">
+            {stats?.verifications.pending}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Aguardando
+          </p>
         </Card>
 
         {/* Anúncios Rejeitados */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Anúncios Rejeitados</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {stats?.ads.rejected}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Total rejeitado
-            </p>
-          </CardContent>
+        <Card className="p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Rejeitados</span>
+            <AlertCircle className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="text-lg font-bold text-red-600">
+            {stats?.ads.rejected}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Total rejeitado
+          </p>
         </Card>
       </div>
     </div>

@@ -16,14 +16,14 @@ export function AdminCharts() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {Array.from({ length: 3 }).map((_, i) => (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-6 w-32" />
+            <CardHeader className="pb-3">
+              <Skeleton className="h-5 w-32" />
             </CardHeader>
             <CardContent>
-              <Skeleton className="h-64 w-full" />
+              <Skeleton className="h-48 w-full" />
             </CardContent>
           </Card>
         ))}
@@ -45,18 +45,18 @@ export function AdminCharts() {
   ].filter(item => item.value > 0);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Gráfico de Anúncios por Dia */}
-      <Card className="lg:col-span-2">
-        <CardHeader>
-          <CardTitle>Anúncios dos Últimos 7 Dias</CardTitle>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Anúncios dos Últimos 7 Dias</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+        <CardContent className="pt-0">
+          <ResponsiveContainer width="100%" height={240}>
             <BarChart data={chartData?.adsData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
+              <XAxis dataKey="date" fontSize={12} />
+              <YAxis fontSize={12} />
               <Tooltip />
               <Bar dataKey="approved" fill={COLORS.approved} name="Aprovados" />
               <Bar dataKey="pending" fill={COLORS.pending} name="Pendentes" />
@@ -68,19 +68,20 @@ export function AdminCharts() {
 
       {/* Gráfico de Pizza - Status dos Anúncios */}
       <Card>
-        <CardHeader>
-          <CardTitle>Status dos Anúncios</CardTitle>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Status dos Anúncios</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+        <CardContent className="pt-0">
+          <ResponsiveContainer width="100%" height={240}>
             <PieChart>
               <Pie
                 data={pieData}
                 cx="50%"
                 cy="50%"
-                outerRadius={80}
+                outerRadius={70}
                 dataKey="value"
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                fontSize={11}
               >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -93,16 +94,16 @@ export function AdminCharts() {
       </Card>
 
       {/* Gráfico de Verificações */}
-      <Card className="lg:col-span-2">
-        <CardHeader>
-          <CardTitle>Verificações dos Últimos 7 Dias</CardTitle>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Verificações dos Últimos 7 Dias</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+        <CardContent className="pt-0">
+          <ResponsiveContainer width="100%" height={240}>
             <LineChart data={chartData?.verificationsData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
+              <XAxis dataKey="date" fontSize={12} />
+              <YAxis fontSize={12} />
               <Tooltip />
               <Line type="monotone" dataKey="total" stroke={COLORS.primary} name="Total" strokeWidth={2} />
               <Line type="monotone" dataKey="approved" stroke={COLORS.approved} name="Aprovadas" strokeWidth={2} />
@@ -114,15 +115,15 @@ export function AdminCharts() {
 
       {/* Gráfico de Novos Usuários */}
       <Card>
-        <CardHeader>
-          <CardTitle>Novos Usuários</CardTitle>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Novos Usuários</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+        <CardContent className="pt-0">
+          <ResponsiveContainer width="100%" height={240}>
             <BarChart data={chartData?.usersData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
+              <XAxis dataKey="date" fontSize={12} />
+              <YAxis fontSize={12} />
               <Tooltip />
               <Bar dataKey="newUsers" fill={COLORS.primary} name="Novos Usuários" />
             </BarChart>

@@ -54,8 +54,8 @@ const Admin = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
+      <div className="container mx-auto px-4 py-6">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
           <p className="text-gray-600 mt-2">Gerencie usuários, anúncios e solicitações com insights detalhados</p>
         </div>
@@ -69,47 +69,39 @@ const Admin = () => {
             <TabsTrigger value="verifications">Verificações</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-8">
-            {/* Estatísticas Básicas */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
+          <TabsContent value="overview" className="space-y-6">
+            {/* Estatísticas Básicas - Layout mais compacto */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-muted-foreground">Total de Usuários</span>
                   <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
-                </CardContent>
+                </div>
+                <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Anúncios Pendentes</CardTitle>
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-muted-foreground">Anúncios Pendentes</span>
                   <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats?.pendingAds || 0}</div>
-                </CardContent>
+                </div>
+                <div className="text-2xl font-bold text-orange-600">{stats?.pendingAds || 0}</div>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Anúncios Ativos</CardTitle>
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-muted-foreground">Anúncios Ativos</span>
                   <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats?.activeAds || 0}</div>
-                </CardContent>
+                </div>
+                <div className="text-2xl font-bold text-green-600">{stats?.activeAds || 0}</div>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Upgrades Pendentes</CardTitle>
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-muted-foreground">Upgrades Pendentes</span>
                   <Shield className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats?.pendingUpgrades || 0}</div>
-                </CardContent>
+                </div>
+                <div className="text-2xl font-bold text-blue-600">{stats?.pendingUpgrades || 0}</div>
               </Card>
             </div>
 
@@ -118,7 +110,7 @@ const Admin = () => {
 
             {/* Gráficos */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Análise de Tendências</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Análise de Tendências</h2>
               <AdminCharts />
             </div>
           </TabsContent>
