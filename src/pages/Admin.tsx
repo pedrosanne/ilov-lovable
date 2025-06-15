@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Users, FileText, CheckCircle, AlertCircle, Shield, Eye, Calendar, User } from 'lucide-react';
 import { useAdminStats, usePendingAds, usePendingDocuments, useApproveAd, useRejectAd, usePendingUpgradeRequests, useApproveUpgradeRequest, useRejectUpgradeRequest } from '@/hooks/useAdminData';
 import { VerificationReview } from '@/components/admin/VerificationReview';
+import { AdminCharts } from '@/components/admin/AdminCharts';
+import { DetailedStats } from '@/components/admin/DetailedStats';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -55,19 +57,20 @@ const Admin = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
-          <p className="text-gray-600 mt-2">Gerencie usuários, anúncios e solicitações</p>
+          <p className="text-gray-600 mt-2">Gerencie usuários, anúncios e solicitações com insights detalhados</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+            <TabsTrigger value="overview">Dashboard</TabsTrigger>
             <TabsTrigger value="ads">Anúncios</TabsTrigger>
             <TabsTrigger value="documents">Documentos</TabsTrigger>
             <TabsTrigger value="upgrades">Upgrades</TabsTrigger>
             <TabsTrigger value="verifications">Verificações</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview">
+          <TabsContent value="overview" className="space-y-8">
+            {/* Estatísticas Básicas */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -108,6 +111,15 @@ const Admin = () => {
                   <div className="text-2xl font-bold">{stats?.pendingUpgrades || 0}</div>
                 </CardContent>
               </Card>
+            </div>
+
+            {/* Estatísticas Detalhadas */}
+            <DetailedStats />
+
+            {/* Gráficos */}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Análise de Tendências</h2>
+              <AdminCharts />
             </div>
           </TabsContent>
 
