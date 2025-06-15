@@ -99,5 +99,18 @@
 
   body {
     @apply bg-background text-foreground font-montserrat;
+    /* Prevent zoom on input focus on iOS */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Prevent zoom on input focus specifically */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
+  @media (min-width: 768px) {
+    input, textarea, select {
+      font-size: 0.875rem !important;
+    }
   }
 }
