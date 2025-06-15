@@ -1,3 +1,4 @@
+
 export interface Database {
   public: {
     Tables: {
@@ -161,7 +162,7 @@ export interface Database {
           user_id: string
           title: string
           description: string
-          price: number
+          price: number | null
           category: 'beleza' | 'saude' | 'casa' | 'tecnologia' | 'educacao' | 'servicos_gerais' | 'consultoria' | 'eventos' | 'acompanhante'
           location: string
           whatsapp: string
@@ -210,12 +211,14 @@ export interface Database {
           preferred_gifts: string | null
           favorite_music: string | null
           highlight_package: string | null
+          voice_audio_url: string | null
+          voice_audio: string | null
         }
         Insert: {
           user_id: string
           title: string
           description: string
-          price: number
+          price?: number | null
           category: 'beleza' | 'saude' | 'casa' | 'tecnologia' | 'educacao' | 'servicos_gerais' | 'consultoria' | 'eventos' | 'acompanhante'
           location: string
           whatsapp: string
@@ -260,11 +263,13 @@ export interface Database {
           preferred_gifts?: string | null
           favorite_music?: string | null
           highlight_package?: string | null
+          voice_audio_url?: string | null
+          voice_audio?: string | null
         }
         Update: {
           title?: string
           description?: string
-          price?: number
+          price?: number | null
           category?: 'beleza' | 'saude' | 'casa' | 'tecnologia' | 'educacao' | 'servicos_gerais' | 'consultoria' | 'eventos' | 'acompanhante'
           location?: string
           whatsapp?: string
@@ -309,6 +314,8 @@ export interface Database {
           preferred_gifts?: string | null
           favorite_music?: string | null
           highlight_package?: string | null
+          voice_audio_url?: string | null
+          voice_audio?: string | null
         }
       }
       highlight_packages: {

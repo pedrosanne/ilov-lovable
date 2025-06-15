@@ -146,6 +146,8 @@ export type Database = {
           video_url: string | null
           videos: Json | null
           views_count: number | null
+          voice_audio: string | null
+          voice_audio_url: string | null
           weight: number | null
           whatsapp: string
         }
@@ -201,6 +203,8 @@ export type Database = {
           video_url?: string | null
           videos?: Json | null
           views_count?: number | null
+          voice_audio?: string | null
+          voice_audio_url?: string | null
           weight?: number | null
           whatsapp: string
         }
@@ -256,6 +260,8 @@ export type Database = {
           video_url?: string | null
           videos?: Json | null
           views_count?: number | null
+          voice_audio?: string | null
+          voice_audio_url?: string | null
           weight?: number | null
           whatsapp?: string
         }

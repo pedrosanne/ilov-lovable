@@ -61,6 +61,10 @@ export function useCreateAdFormV2() {
       ...formData,
       // Garantir que price seja null se não foi preenchido
       price: formData.price && formData.price > 0 ? formData.price : null,
+      // Remover campos de File objects que não devem ser enviados para o banco
+      photos: undefined,
+      videos: undefined,
+      voice_audio: undefined,
       status: 'pending_approval' as const,
     };
 
