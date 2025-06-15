@@ -18,7 +18,7 @@ import { CreateAdSection } from '@/components/dashboard/CreateAdSection';
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const { data: stats, isLoading: statsLoading } = useAdStats();
-  const { isVerified, hasVerification, verificationStatus } = useVerificationStatus();
+  const { isVerified, hasVerification, verificationStatus, isLoading: verificationLoading } = useVerificationStatus();
 
   // Get real favorites count
   const { data: favoritesCount } = useQuery({
@@ -100,6 +100,7 @@ const Dashboard = () => {
             isVerified={isVerified}
             hasVerification={hasVerification}
             verificationStatus={verificationStatus}
+            isLoading={verificationLoading}
           />
         </div>
 

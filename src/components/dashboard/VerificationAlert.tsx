@@ -8,10 +8,12 @@ interface VerificationAlertProps {
   isVerified: boolean;
   hasVerification: boolean;
   verificationStatus?: string;
+  isLoading?: boolean;
 }
 
-export function VerificationAlert({ isVerified, hasVerification, verificationStatus }: VerificationAlertProps) {
-  if (isVerified) return null;
+export function VerificationAlert({ isVerified, hasVerification, verificationStatus, isLoading }: VerificationAlertProps) {
+  // Não renderizar nada durante o carregamento para evitar flash
+  if (isLoading || isVerified) return null;
 
   if (!hasVerification) {
     return (
